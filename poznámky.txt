@@ -1,0 +1,55 @@
+
+-- Visual Studio 
+dotnet publish -r debian-arm -f netcoreapp2.0
+
+
+cp -avr /mnt/smb/repos/CMLSmartHome /home/pi/VSProjects
+
+sudo rm -r /var/aspnetcore/CMLSmartHome/*
+sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.0/debian-arm/ /var/aspnetcore/CMLSmartHome
+
+c:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome\bin\Debug\netcoreapp2.0\debian-x64\
+
+cd /var/aspnetcore/CMLSmartHome/debian-arm/publish/
+
+./var/aspnetcore/CMLSmartHome/CMLSmartHome.dll
+
+sudo nano /etc/systemd/system/CMLSmartHome.service
+sudo journalctl -fu CMLSmartHome.service
+
+systemctl enable CMLSmartHome.service
+systemctl start CMLSmartHome.service
+systemctl status CMLSmartHome.service
+
+systemctl status WebAPITest.service
+sudo journalctl -fu WebAPITest.service
+
+sudo nano /etc/systemd/system/CMLSmartHome.service
+sudo nano /etc/systemd/system/WebAPITest.service
+
+VisualStudio
+------------
+update-database
+
+WWW:
+sudo nano /etc/nginx/sites-available/default
+------------------------------------------------------------
+NB: dotnet publish -r debian-arm -f netcoreapp2.0
+PI:
+sudo service nginx stop
+systemctl stop CMLSmartHome.service
+sudo rm -r /var/aspnetcore/CMLSmartHome/*
+sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.0/debian-arm/publish/* /var/aspnetcore/CMLSmartHome
+systemctl start CMLSmartHome.service
+sudo service nginx start
+
+------------------------------------------------------------
+NB: dotnet publish C:\Users\Radek\source\repos\WebAPITest\WebAPITest.sln -r debian-arm -f netcoreapp2.1
+PI:
+sudo service nginx stop
+systemctl stop WebAPITest.service
+sudo rm -r /var/aspnetcore/WebAPITest/*
+sudo cp -avr /mnt/smb/repos/WebAPITest/WebAPITest/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/WebAPITest
+systemctl enable WebAPITest.service
+systemctl start WebAPITest.service
+sudo service nginx start
