@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>CMLSmartHomeController</AssemblyName>
+    <RootNamespace>CMLSmartHomeController</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMLSmartHome", "CMLSmartHome\CMLSmartHome.csproj", "{E78EE046-CB8F-4BE3-B866-AC152D7DA076}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CMLSmartHomeController", "CMLSmartHome\CMLSmartHomeController.csproj", "{E78EE046-CB8F-4BE3-B866-AC152D7DA076}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMLSmartHomeCollector", "CMLSmartHomeCollector\CMLSmartHomeCollector.csproj", "{76E79913-A6A4-4156-94CA-84B328666B37}"
 EndProject
