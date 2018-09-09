@@ -1,4 +1,5 @@
 ﻿using CMLSmartHome.Enums;
+using Microsoft.Extensions.Configuration;
 
 namespace CMLSmartHome.Models
 {
@@ -7,6 +8,12 @@ namespace CMLSmartHome.Models
     /// </summary>
     public class Sensor
     {
+        public Sensor(IConfigurationSection configurationSection)
+        {
+            var type = configurationSection.GetValue<string>("Type");
+            var readingFrequency = configurationSection.GetValue<int>("ReadingFrequency");
+        }
+
         /// <summary>
         /// Jednoynačný identifikátor záznamu
         /// </summary>
