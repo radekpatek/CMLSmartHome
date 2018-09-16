@@ -4,18 +4,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMLSmartHome.Models;
+using Microsoft.Extensions.Logging;
+using CMLSmartHomeCommon.Models;
 
-namespace CMLSmartHome.Controllers
+namespace CMLSmartHomeCommon.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class SensorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private ILogger<SensorsController> _logger;
 
-        public SensorsController(ApplicationDbContext context)
+        public SensorsController(ApplicationDbContext context, ILogger<SensorsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Sensors
@@ -48,6 +52,9 @@ namespace CMLSmartHome.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSensor([FromRoute] long id, [FromBody] Sensor sensor)
         {
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(sensor);
+            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -83,6 +90,8 @@ namespace CMLSmartHome.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSensor([FromBody] Sensor sensor)
         {
+            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

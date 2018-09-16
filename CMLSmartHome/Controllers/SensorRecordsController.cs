@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMLSmartHome.Models;
+using log4net.Repository.Hierarchy;
+using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace CMLSmartHome.Controllers
 {
@@ -14,10 +17,12 @@ namespace CMLSmartHome.Controllers
     public class SensorRecordsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private ILogger<SensorRecordsController> _logger;
 
-        public SensorRecordsController(ApplicationDbContext context)
+        public SensorRecordsController(ApplicationDbContext context, ILogger<SensorRecordsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/SensorRecords
@@ -50,6 +55,8 @@ namespace CMLSmartHome.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSensorRecord([FromRoute] long id, [FromBody] SensorRecord sensorRecord)
         {
+
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -85,6 +92,8 @@ namespace CMLSmartHome.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSensorRecord([FromBody] SensorRecord sensorRecord)
         {
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(sensorRecord);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

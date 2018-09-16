@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net;
 
 namespace CMLSmartHome
 {
@@ -15,6 +18,7 @@ namespace CMLSmartHome
         {
             Configuration = configuration;
         }
+    
 
         public IConfiguration Configuration { get; }
 
@@ -24,6 +28,7 @@ namespace CMLSmartHome
             services.AddDbContext<ApplicationDbContext>(options =>
                            options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+           
 
         }
 
@@ -40,6 +45,7 @@ namespace CMLSmartHome
             }
 
             loggerFactory.AddLog4Net();
+            loggerFactory.AddDebug();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

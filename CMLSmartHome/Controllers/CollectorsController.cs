@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMLSmartHome.Models;
+using Microsoft.Extensions.Logging;
+using CMLSmartHomeCommon.Models;
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -14,10 +14,12 @@ namespace CMLSmartHomeController.Controllers
     public class CollectorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private ILogger<CollectorsController> _logger;
 
-        public CollectorsController(ApplicationDbContext context)
+        public CollectorsController(ApplicationDbContext context, ILogger<CollectorsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Collectors
@@ -25,6 +27,28 @@ namespace CMLSmartHomeController.Controllers
         public IEnumerable<Collector> GetCollectors()
         {
             return _context.Collectors;
+        }
+
+        [Route("search")]
+        [HttpGet]
+#pragma warning disable CS1998 // V této asynchronní metodě chybí operátory await a spustí se synchronně.
+        public async Task<IActionResult> GetCollectorsByQuery(string macAddress)
+#pragma warning restore CS1998 // V této asynchronní metodě chybí operátory await a spustí se synchronně.
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var collector = _context.Collectors.Include(t => t.Sensors)
+                                    .Where(t => t.MACAddress == macAddress).FirstOrDefault();
+
+            if (collector == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(collector);
         }
 
         // GET: api/Collectors/5

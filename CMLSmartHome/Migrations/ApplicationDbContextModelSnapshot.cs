@@ -50,6 +50,8 @@ namespace CMLSmartHome.Migrations
 
                     b.Property<int>("Type");
 
+                    b.Property<int>("Unit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CollectorId");

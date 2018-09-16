@@ -1,4 +1,6 @@
-﻿using log4net;
+﻿using CMLSmartHomeCollector.Classes;
+using CMLSmartHomeCollector.Interfaces;
+using log4net;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,7 @@ namespace CMLSmartHomeCollector
                 var configuration = serviceProvider.GetService<IConfiguration>();
       
                 // Run collector
-                serviceProvider.GetService<Collector>().Run();
+                serviceProvider.GetService<CollectorBase>().Run();
 
                 logger.Info("Stop CMLSmartHomeController");
             }
@@ -44,7 +46,9 @@ namespace CMLSmartHomeCollector
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
-            services.AddSingleton(LogManager.GetLogger(typeof(Program)));
+            var logger = LogManager.GetLogger(typeof(Program));
+
+            services.AddSingleton(logger);
             services.AddLogging();
 
             // build config
@@ -54,10 +58,10 @@ namespace CMLSmartHomeCollector
                     .Build();
 
             services.AddOptions();
-            services.AddSingleton<IConfiguration>(configuration.GetSection("App"));
 
-            // add app
-            services.AddTransient<Collector>();
+            services.AddSingleton<IConfiguration>(configuration.GetSection("App"));
+            services.AddSingleton<IRestClient>(new RestClient(logger, configuration.GetSection("App")));
+            services.AddTransient<CollectorBase>();
         }
     }
 }

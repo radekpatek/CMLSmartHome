@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CMLSmartHome.Models;
+﻿using CMLSmartHomeCommon.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMLSmartHome.Models
 {
@@ -12,12 +8,12 @@ namespace CMLSmartHome.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-           
+
         }
 
         public DbSet<Collector> Collectors { get; set; }
         public DbSet<Sensor> Sensors { get; set; }
-        public DbSet<SmartHomeController> Controller { get; set; }
+        public DbSet<SmartHomeController> Controllers { get; set; }
         public DbSet<SensorRecord> SensorRecord { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

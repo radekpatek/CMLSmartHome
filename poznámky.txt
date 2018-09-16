@@ -29,7 +29,12 @@ sudo nano /etc/systemd/system/WebAPITest.service
 
 VisualStudio
 ------------
+add-migration
+add-migration first
 update-database
+
+WebApp - propojení webapi s www
+https://www.youtube.com/watch?v=wYMdqhid4Fs
 
 WWW:
 sudo nano /etc/nginx/sites-available/default

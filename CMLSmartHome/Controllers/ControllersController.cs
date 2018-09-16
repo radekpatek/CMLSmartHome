@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMLSmartHome.Models;
 using System.Net.NetworkInformation;
 using System.Net;
-using System.Net.Sockets;
 
 namespace CMLSmartHome.Controllers
 {
@@ -19,27 +16,23 @@ namespace CMLSmartHome.Controllers
         private readonly ApplicationDbContext _context;
 
         /// <summary>
-        /// Získání lokální IP adresy 
+        /// Get local Host Name
         /// </summary>
-        private IPAddress LocalIPAddress()
+        private string LocalHostName()
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
                 return null;
             }
 
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-
-            return host
-                .AddressList
-                .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            return Dns.GetHostName();
         }
-
+        
         public ControllersController(ApplicationDbContext context)
         {
             _context = context;
 
-            if (_context.Controller.Count() == 0)
+            if (_context.Controllers.Count() == 0)
             {
                 var macAddress = NetworkInterface
                     .GetAllNetworkInterfaces()
@@ -47,17 +40,17 @@ namespace CMLSmartHome.Controllers
                     .Select(nic => nic.GetPhysicalAddress().ToString())
                     .FirstOrDefault();
 
-                _context.Controller.Add(new SmartHomeController { Name = "Main SmartHome Controller", MACAddress = macAddress, IPAddress = LocalIPAddress().ToString() });
+                _context.Controllers.Add(new Models.SmartHomeController { Description = "Main SmartHome Controller", MACAddress = macAddress, Name = LocalHostName() });
                 _context.SaveChanges();
             }
 
         }
-
+        
         // GET: api/Controllers
         [HttpGet]
-        public IEnumerable<SmartHomeController> GetController()
+        public IEnumerable<Models.SmartHomeController> GetController()
         {
-            return _context.Controller;
+            return _context.Controllers;
         }
 
         // GET: api/Controllers/5
@@ -69,7 +62,7 @@ namespace CMLSmartHome.Controllers
                 return BadRequest(ModelState);
             }
 
-            var controller = await _context.Controller.FindAsync(id);
+            var controller = await _context.Controllers.FindAsync(id);
 
             if (controller == null)
             {
@@ -81,7 +74,7 @@ namespace CMLSmartHome.Controllers
 
         // PUT: api/Controllers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutController([FromRoute] long id, [FromBody] SmartHomeController controller)
+        public async Task<IActionResult> PutController([FromRoute] long id, [FromBody] Models.SmartHomeController controller)
         {
             if (!ModelState.IsValid)
             {
@@ -116,14 +109,14 @@ namespace CMLSmartHome.Controllers
 
         // POST: api/Controllers
         [HttpPost]
-        public async Task<IActionResult> PostController([FromBody] SmartHomeController controller)
+        public async Task<IActionResult> PostController([FromBody] Models.SmartHomeController controller)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Controller.Add(controller);
+            _context.Controllers.Add(controller);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetController", new { id = controller.Id }, controller);
@@ -138,13 +131,13 @@ namespace CMLSmartHome.Controllers
                 return BadRequest(ModelState);
             }
 
-            var controller = await _context.Controller.FindAsync(id);
+            var controller = await _context.Controllers.FindAsync(id);
             if (controller == null)
             {
                 return NotFound();
             }
 
-            _context.Controller.Remove(controller);
+            _context.Controllers.Remove(controller);
             await _context.SaveChangesAsync();
 
             return Ok(controller);
@@ -152,7 +145,7 @@ namespace CMLSmartHome.Controllers
 
         private bool ControllerExists(long id)
         {
-            return _context.Controller.Any(e => e.Id == id);
+            return _context.Controllers.Any(e => e.Id == id);
         }
     }
 }
