@@ -3,11 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CMLSmartHome.Models;
+using CMLSmartHomeController.Models;
 using System.Net.NetworkInformation;
 using System.Net;
+using CMLSmartHomeController.Model;
 
-namespace CMLSmartHome.Controllers
+namespace CMLSmartHomeController.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -40,7 +41,7 @@ namespace CMLSmartHome.Controllers
                     .Select(nic => nic.GetPhysicalAddress().ToString())
                     .FirstOrDefault();
 
-                _context.Controllers.Add(new Models.SmartHomeController { Description = "Main SmartHome Controller", MACAddress = macAddress, Name = LocalHostName() });
+                _context.Controllers.Add(new SmartHomeController { Description = "Main SmartHome Controller", MACAddress = macAddress, Name = LocalHostName() });
                 _context.SaveChanges();
             }
 
@@ -48,7 +49,7 @@ namespace CMLSmartHome.Controllers
         
         // GET: api/Controllers
         [HttpGet]
-        public IEnumerable<Models.SmartHomeController> GetController()
+        public IEnumerable<SmartHomeController> GetController()
         {
             return _context.Controllers;
         }
@@ -74,7 +75,7 @@ namespace CMLSmartHome.Controllers
 
         // PUT: api/Controllers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutController([FromRoute] long id, [FromBody] Models.SmartHomeController controller)
+        public async Task<IActionResult> PutController([FromRoute] long id, [FromBody] SmartHomeController controller)
         {
             if (!ModelState.IsValid)
             {
@@ -109,7 +110,7 @@ namespace CMLSmartHome.Controllers
 
         // POST: api/Controllers
         [HttpPost]
-        public async Task<IActionResult> PostController([FromBody] Models.SmartHomeController controller)
+        public async Task<IActionResult> PostController([FromBody] SmartHomeController controller)
         {
             if (!ModelState.IsValid)
             {

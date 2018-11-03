@@ -1,6 +1,6 @@
 ﻿using CMLSmartHomeCommon.Enums;
 
-namespace CMLSmartHomeCommon.Models
+namespace CMLSmartHomeCommon.Model
 {
     /// <summary>
     /// Čidlo pro snímání fyzikálních veličin

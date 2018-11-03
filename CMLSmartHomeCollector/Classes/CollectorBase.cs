@@ -1,7 +1,6 @@
-﻿using CMLSmartHome.Models;
-using CMLSmartHomeCollector.Classes.Sensors;
-using CMLSmartHomeCollector.Factories;
+﻿using CMLSmartHomeCollector.Factories;
 using CMLSmartHomeCollector.Interfaces;
+using CMLSmartHomeController.Model;
 using log4net;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -75,6 +74,12 @@ namespace CMLSmartHomeCollector
             {
                 //Save collector
                 registredCollector = _communicator.SetCollector(this);
+
+                if (registredCollector == null)
+                {
+                    throw new System.NullReferenceException("RegisterCollectorInController: registredCollector null object after SetCollector");
+                }
+           
             }
 
             id = registredCollector.Id;
@@ -115,6 +120,7 @@ namespace CMLSmartHomeCollector
                     sensorRecord.SensorId = sensor.Id;
                     sensorRecord.Unit = sensor.Unit;
                     sensorRecord.Value = measureValue;
+                    sensorRecord.DateTime = System.DateTime.Now;
 
                     _communicator.SetMeasure(sensorRecord);
 

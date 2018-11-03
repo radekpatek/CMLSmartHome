@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CMLSmartHome.Models;
+using CMLSmartHomeController.Models;
 using Microsoft.Extensions.Logging;
-using CMLSmartHomeCommon.Models;
+using CMLSmartHomeCommon.Model;
 
 namespace CMLSmartHomeCommon.Controllers
 {

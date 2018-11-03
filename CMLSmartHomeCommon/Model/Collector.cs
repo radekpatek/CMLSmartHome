@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CMLSmartHomeCommon.Models
+namespace CMLSmartHomeCommon.Model
 {
     /// <summary>
     /// Zařízení, které zajišťuje sběr hodnot ze senzorů

@@ -1,16 +1,12 @@
-﻿using CMLSmartHome.Models;
-using CMLSmartHomeCollector.Interfaces;
-using CMLSmartHomeCommon.Models;
+﻿using CMLSmartHomeCollector.Interfaces;
 using log4net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.NetworkInformation;
 using System.Text;
+using CMLSmartHomeController.Model;
+using CMLSmartHomeCommon.Model;
 
 namespace CMLSmartHomeCollector.Classes
 {
@@ -20,7 +16,6 @@ namespace CMLSmartHomeCollector.Classes
         private ILog _logger;
         private IConfiguration _configuration;
         private string _controllerServer;
-        private string _port;
         private string _restAPI;
         private readonly string _contentType;
 
@@ -36,7 +31,6 @@ namespace CMLSmartHomeCollector.Classes
             _logger = logger;
             _configuration = configuration;
             _controllerServer = _configuration["ControllerServer"];
-            _port = _configuration["Port"];
             _restAPI = _configuration["RestAPI"];
             _contentType = "application/json";
 
@@ -51,7 +45,7 @@ namespace CMLSmartHomeCollector.Classes
         {
             var controller = "Collectors/Search";
 
-            UriBuilder builder = new UriBuilder(string.Format("https://{0}:{1}/{2}/{3}", _controllerServer, _port, _restAPI, controller))
+            UriBuilder builder = new UriBuilder(string.Format("http://{0}/{1}/{2}", _controllerServer, _restAPI, controller))
             {
                 Query = string.Format("macAddress={0}", collector.macAddress)
             };
@@ -72,13 +66,13 @@ namespace CMLSmartHomeCollector.Classes
         {
             var controller = "Collectors";
 
-            string url = string.Format("https://{0}:{1}/{2}/{3}", _controllerServer, _port, _restAPI, controller);
+            string url = string.Format("http://{0}/{1}/{2}", _controllerServer, _restAPI, controller);
             var uri = new Uri(url);
 
             _logger.Info(string.Format("Call Rest API - {0}", url));
 
             var PostData = JsonConvert.SerializeObject(collector);
-
+            
             var response = _httpClient.PostAsync(uri, new StringContent(PostData, Encoding.UTF8, _contentType));
 
             string jsonResult = response.Result.Content.ReadAsStringAsync().Result;
@@ -92,7 +86,7 @@ namespace CMLSmartHomeCollector.Classes
         {
             var controller = "SensorRecords";
 
-            string url = string.Format("https://{0}:{1}/{2}/{3}", _controllerServer, _port, _restAPI, controller);
+            string url = string.Format("http://{0}/{1}/{2}", _controllerServer, _restAPI, controller);
             var uri = new Uri(url);
 
             _logger.Info(string.Format("Call Rest API - {0}", url));

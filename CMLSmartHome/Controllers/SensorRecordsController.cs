@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CMLSmartHome.Models;
-using log4net.Repository.Hierarchy;
-using System.Net;
 using Microsoft.Extensions.Logging;
+using CMLSmartHomeController.Model;
+using CMLSmartHomeController.Models;
 
-namespace CMLSmartHome.Controllers
+namespace CMLSmartHomeController.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,7 +26,7 @@ namespace CMLSmartHome.Controllers
         [HttpGet]
         public IEnumerable<SensorRecord> GetSensorRecord()
         {
-            return _context.SensorRecord;
+            return _context.SensorRecords;
         }
 
         // GET: api/SensorRecords/5
@@ -41,7 +38,7 @@ namespace CMLSmartHome.Controllers
                 return BadRequest(ModelState);
             }
 
-            var sensorRecord = await _context.SensorRecord.FindAsync(id);
+            var sensorRecord = await _context.SensorRecords.FindAsync(id);
 
             if (sensorRecord == null)
             {
@@ -99,7 +96,7 @@ namespace CMLSmartHome.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.SensorRecord.Add(sensorRecord);
+            _context.SensorRecords.Add(sensorRecord);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSensorRecord", new { id = sensorRecord.Id }, sensorRecord);
@@ -114,13 +111,13 @@ namespace CMLSmartHome.Controllers
                 return BadRequest(ModelState);
             }
 
-            var sensorRecord = await _context.SensorRecord.FindAsync(id);
+            var sensorRecord = await _context.SensorRecords.FindAsync(id);
             if (sensorRecord == null)
             {
                 return NotFound();
             }
 
-            _context.SensorRecord.Remove(sensorRecord);
+            _context.SensorRecords.Remove(sensorRecord);
             await _context.SaveChangesAsync();
 
             return Ok(sensorRecord);
@@ -128,7 +125,7 @@ namespace CMLSmartHome.Controllers
 
         private bool SensorRecordExists(long id)
         {
-            return _context.SensorRecord.Any(e => e.Id == id);
+            return _context.SensorRecords.Any(e => e.Id == id);
         }
     }
 }

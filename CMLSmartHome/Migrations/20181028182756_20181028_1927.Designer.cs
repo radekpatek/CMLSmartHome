@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMLSmartHomeController.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180915194453_20180915_01")]
-    partial class _20180915_01
+    [Migration("20181028182756_20181028_1927")]
+    partial class _20181028_1927
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,54 +19,14 @@ namespace CMLSmartHomeController.Migrations
                 .HasAnnotation("ProductVersion", "2.1.2-rtm-30932")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CMLSmartHome.Models.Collector", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("IPAddress");
-
-                    b.Property<string>("MACAddress");
-
-                    b.Property<string>("Name");
-
-                    b.Property<long?>("SmartHomeControllerId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SmartHomeControllerId");
-
-                    b.ToTable("Collectors");
-                });
-
-            modelBuilder.Entity("CMLSmartHome.Models.Sensor", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long?>("CollectorId");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("Type");
-
-                    b.Property<int>("Unit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectorId");
-
-                    b.ToTable("Sensors");
-                });
-
             modelBuilder.Entity("CMLSmartHome.Models.SensorRecord", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<long>("CollectorId");
+
+                    b.Property<DateTime>("DateTime");
 
                     b.Property<long>("SensorId");
 
@@ -86,8 +46,6 @@ namespace CMLSmartHomeController.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("IPAddress");
-
                     b.Property<string>("MACAddress");
 
                     b.Property<string>("Name");
@@ -97,16 +55,56 @@ namespace CMLSmartHomeController.Migrations
                     b.ToTable("Controller");
                 });
 
-            modelBuilder.Entity("CMLSmartHome.Models.Collector", b =>
+            modelBuilder.Entity("CMLSmartHomeCommon.Models.Collector", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("MACAddress");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long?>("SmartHomeControllerId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SmartHomeControllerId");
+
+                    b.ToTable("Collectors");
+                });
+
+            modelBuilder.Entity("CMLSmartHomeCommon.Models.Sensor", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long?>("CollectorId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("Type");
+
+                    b.Property<int>("Unit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectorId");
+
+                    b.ToTable("Sensors");
+                });
+
+            modelBuilder.Entity("CMLSmartHomeCommon.Models.Collector", b =>
                 {
                     b.HasOne("CMLSmartHome.Models.SmartHomeController")
                         .WithMany("Collectors")
                         .HasForeignKey("SmartHomeControllerId");
                 });
 
-            modelBuilder.Entity("CMLSmartHome.Models.Sensor", b =>
+            modelBuilder.Entity("CMLSmartHomeCommon.Models.Sensor", b =>
                 {
-                    b.HasOne("CMLSmartHome.Models.Collector")
+                    b.HasOne("CMLSmartHomeCommon.Models.Collector")
                         .WithMany("Sensors")
                         .HasForeignKey("CollectorId");
                 });

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CMLSmartHome.Migrations
+namespace CMLSmartHomeController.Migrations
 {
     public partial class CMLSmartHome : Migration
     {

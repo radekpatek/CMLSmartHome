@@ -1,4 +1,4 @@
-﻿namespace CMLSmartHomeCommon.Models
+﻿namespace CMLSmartHomeCommon.Model
 {
     /// <summary>
     /// Zařízení, které je registrovat v síti

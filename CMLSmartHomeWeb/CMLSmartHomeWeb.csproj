@@ -10,11 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CMLSmartHomeCommon\CMLSmartHomeCommon.csproj" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <ProjectReference Include="..\CMLSmartHomeCommon\CMLSmartHomeCommon.csproj" />
   </ItemGroup>
 
 </Project>

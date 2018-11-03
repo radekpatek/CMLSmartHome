@@ -1,6 +1,7 @@
 ﻿using CMLSmartHomeCommon.Enums;
+using CMLSmartHomeCommon.Model;
 
-namespace CMLSmartHome.Models
+namespace CMLSmartHomeController.Model
 {
     /// <summary>
     /// Záznam měření senzorem
@@ -32,5 +33,11 @@ namespace CMLSmartHome.Models
         /// </summary>
         public UnitType Unit { get; set; }
 
-}
+        /// <summary>
+        /// Datum měření
+        /// </summary>
+        public System.DateTime DateTime { get; set; }
+
+
+    }
 }

@@ -1,5 +1,5 @@
-﻿using CMLSmartHome.Models;
-using CMLSmartHomeCommon.Models;
+﻿using CMLSmartHomeCommon.Model;
+using CMLSmartHomeController.Model;
 
 namespace CMLSmartHomeCollector.Interfaces
 {

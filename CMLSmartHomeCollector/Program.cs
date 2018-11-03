@@ -15,6 +15,9 @@ namespace CMLSmartHomeCollector
         {
             // create service collection
             var services = new ServiceCollection();
+
+            var environmentName = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             ConfigureServices(services);
 
             // create service provider
@@ -36,6 +39,8 @@ namespace CMLSmartHomeCollector
             catch (System.Exception e)
             {
                 logger.Error(string.Format("MessageText: {0}", e.Message), e);
+                throw new System.Exception(string.Format("catch: {0}, StackTrace: {1}", e.Message, e.StackTrace));
+
             }
         }
 
@@ -47,14 +52,18 @@ namespace CMLSmartHomeCollector
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
             var logger = LogManager.GetLogger(typeof(Program));
+            
+            logger.Error("Start CMLSmartHomeController - error");
 
             services.AddSingleton(logger);
             services.AddLogging();
 
             // build config
+            var environmentName = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             var configuration = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json")
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
                     .Build();
 
             services.AddOptions();

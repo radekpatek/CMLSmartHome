@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CMLSmartHome.Controllers
+namespace CMLSmartHomeController.Controllers
 {
     /*
     [Serializable]

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace CMLSmartHomeWeb.Helper
 {
     public class CollectorAPI
     {
-        public HttpClient Initialize()
+
+        public HttpClient Initialize(IConfiguration configuration)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:57534");
+            client.BaseAddress = new Uri(configuration.GetSection("SmartHomeController").GetSection("URL").Value);
             return client;
         }
     }

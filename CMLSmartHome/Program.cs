@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace CMLSmartHome
+namespace CMLSmartHomeController
 {
     public class Program
     {
@@ -19,6 +19,7 @@ namespace CMLSmartHome
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseUrls("http://localhost:5000/");
     }
 }

@@ -1,4 +1,4 @@
-﻿using CMLSmartHome.Models;
+﻿using CMLSmartHomeController.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net;
 
-namespace CMLSmartHome
+namespace CMLSmartHomeController
 {
     public class Startup
     {

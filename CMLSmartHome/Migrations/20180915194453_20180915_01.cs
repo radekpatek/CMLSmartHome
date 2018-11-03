@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CMLSmartHome.Migrations
+namespace CMLSmartHomeController.Migrations
 {
     public partial class _20180915_01 : Migration
     {

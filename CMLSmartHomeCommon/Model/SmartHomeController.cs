@@ -1,7 +1,7 @@
-﻿using CMLSmartHomeCommon.Models;
+﻿using CMLSmartHomeCommon.Model;
 using System.Collections.Generic;
 
-namespace CMLSmartHome.Models
+namespace CMLSmartHomeController.Model
 {
     /// <summary>
     /// Zařízení, které zajišťuje řízení prvků 
