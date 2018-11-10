@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using CMLSmartHomeWeb.Models;
 
 namespace CMLSmartHomeWeb
 {
@@ -28,6 +30,9 @@ namespace CMLSmartHomeWeb
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddDbContext<CMLSmartHomeWebContext>(options =>
+             //       options.UseSqlServer(Configuration.GetConnectionString("CMLSmartHomeWebContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +56,7 @@ namespace CMLSmartHomeWeb
             {
                 routes.MapRoute(
                     name: "default",
-                    //template: "{controller=Home}/{action=Index}/{id?}");
-                    template: "{controller=Collector}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

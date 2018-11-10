@@ -53,7 +53,9 @@ namespace CMLSmartHomeCollector.Classes
             _logger.Info(string.Format("Call Rest API - {0}", builder.Uri));
 
             var response = _httpClient.GetAsync(builder.Uri);
+
             string jsonResult = response.Result.Content.ReadAsStringAsync().Result;
+
 
             return JsonConvert.DeserializeObject<Collector>(jsonResult);
         }
@@ -89,7 +91,7 @@ namespace CMLSmartHomeCollector.Classes
             string url = string.Format("http://{0}/{1}/{2}", _controllerServer, _restAPI, controller);
             var uri = new Uri(url);
 
-            _logger.Info(string.Format("Call Rest API - {0}", url));
+            _logger.Info(string.Format("Call Rest API - {0}/Post", url));
 
             var PostData = JsonConvert.SerializeObject(sensorRecord);
 

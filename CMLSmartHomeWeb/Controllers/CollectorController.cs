@@ -17,20 +17,20 @@ namespace CMLSmartHomeWeb.Controllers
             _configuration = configuration;
         }
 
-        CollectorAPI _collectorAPI = new CollectorAPI();
+        ControllerAPI _collectorAPI = new ControllerAPI();
 
         public async Task<IActionResult> Index()
         {
-            var students = new List<Collector>();
+            var collectors = new List<Collector>();
             var client = _collectorAPI.Initialize(_configuration);
             var response = await client.GetAsync("api/Collectors");
             if (response.IsSuccessStatusCode)
             {
                 string jsonResult = response.Content.ReadAsStringAsync().Result;
-                students = JsonConvert.DeserializeObject<List<Collector>>(jsonResult);
+                collectors = JsonConvert.DeserializeObject<List<Collector>>(jsonResult);
             }
 
-            return View(students); 
+            return View(collectors); 
         }
     }
 }

@@ -51,7 +51,7 @@ namespace CMLSmartHomeController.Controllers
         [HttpGet]
         public IEnumerable<SmartHomeController> GetController()
         {
-            return _context.Controllers;
+            return _context.Controllers.Include(s => s.Collectors);
         }
 
         // GET: api/Controllers/5

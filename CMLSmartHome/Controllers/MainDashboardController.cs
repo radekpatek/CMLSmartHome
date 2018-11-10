@@ -25,40 +25,42 @@ namespace CMLSmartHomeController.Controllers
         {
             var mainDashboard = new MainDashboard();
 
-            var dashboard = _context.Dashboards.Include(t => t.InternalCollector.Sensors).First();
-
-            if (dashboard != null)
+            if (_context.Dashboards.Count() > 0)
             {
-                var InternalTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
-                if (InternalTemperaturSensor != null)
+                var dashboard = _context.Dashboards.Include(t => t.InternalCollector.Sensors).First();
+
+                if (dashboard != null)
                 {
-                    mainDashboard.InternalTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                                 && t.SensorId == InternalTemperaturSensor.Id).LastOrDefault()?.Value;
-                }
+                    var InternalTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
+                    if (InternalTemperaturSensor != null)
+                    {
+                        mainDashboard.InternalTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
+                                                     && t.SensorId == InternalTemperaturSensor.Id).LastOrDefault()?.Value;
+                    }
 
-                var InternalHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
-                if (InternalHumiditySensor != null)
-                { 
-                    mainDashboard.InternalHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                             && t.SensorId == InternalHumiditySensor.Id).LastOrDefault()?.Value;
-                }
+                    var InternalHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
+                    if (InternalHumiditySensor != null)
+                    {
+                        mainDashboard.InternalHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
+                                                 && t.SensorId == InternalHumiditySensor.Id).LastOrDefault()?.Value;
+                    }
 
-                var OutdoorTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
-                if (OutdoorTemperaturSensor != null)
-                {
-                    mainDashboard.OutdoorTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                             && t.SensorId == OutdoorTemperaturSensor.Id).LastOrDefault()?.Value;
-                }
+                    var OutdoorTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
+                    if (OutdoorTemperaturSensor != null)
+                    {
+                        mainDashboard.OutdoorTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
+                                                 && t.SensorId == OutdoorTemperaturSensor.Id).LastOrDefault()?.Value;
+                    }
 
-                var OutdoorHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
-                if (OutdoorHumiditySensor != null)
-                {
-                    mainDashboard.OutdoorHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                             && t.SensorId == OutdoorHumiditySensor.Id).LastOrDefault()?.Value;
-                }
+                    var OutdoorHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
+                    if (OutdoorHumiditySensor != null)
+                    {
+                        mainDashboard.OutdoorHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
+                                                 && t.SensorId == OutdoorHumiditySensor.Id).LastOrDefault()?.Value;
+                    }
 
+                }
             }
-
       
             return mainDashboard;
         }

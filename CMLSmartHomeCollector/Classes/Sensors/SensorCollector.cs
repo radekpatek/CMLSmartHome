@@ -1,7 +1,8 @@
-﻿using CMLSmartHomeCommon.Enums;
+﻿using System;
+using CMLSmartHomeCommon.Enums;
 using CMLSmartHomeCommon.Model;
 
-namespace CMLSmartHomeCollector
+namespace CMLSmartHomeCollector.Sensors
 {
     public abstract class SensorCollector
     {
@@ -17,11 +18,6 @@ namespace CMLSmartHomeCollector
         public SensorType Type { get; set; }
 
         /// <summary>
-        /// Sensor reading frequency. The value is given in seconds
-        /// </summary>
-        public int ReadingFrequency { get; set; }
-
-        /// <summary>
         /// Jenotka měření
         /// </summary>
         public UnitType Unit { get; set; }
@@ -31,6 +27,12 @@ namespace CMLSmartHomeCollector
         /// </summary>
         /// <returns></returns>
         public abstract double Measure();
+
+        /// <summary>
+        /// Measures the value of the sensor with the sensor type
+        /// </summary>
+        /// <returns></returns>
+        public abstract double Measure(SensorType type);
 
         public void Synchronize(Sensor sensor)
         {

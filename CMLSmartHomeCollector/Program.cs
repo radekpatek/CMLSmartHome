@@ -27,19 +27,19 @@ namespace CMLSmartHomeCollector
 
             try
             {
-                logger.Info("Start CMLSmartHomeController");
+                logger.Info("Start CMLSmartHomeCollector");
 
                 var configuration = serviceProvider.GetService<IConfiguration>();
-      
+
                 // Run collector
                 serviceProvider.GetService<CollectorBase>().Run();
 
-                logger.Info("Stop CMLSmartHomeController");
+
+                logger.Info("Start CMLSmartHomeCollector");
             }
             catch (System.Exception e)
             {
                 logger.Error(string.Format("MessageText: {0}", e.Message), e);
-                throw new System.Exception(string.Format("catch: {0}, StackTrace: {1}", e.Message, e.StackTrace));
 
             }
         }
@@ -52,8 +52,6 @@ namespace CMLSmartHomeCollector
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
             var logger = LogManager.GetLogger(typeof(Program));
-            
-            logger.Error("Start CMLSmartHomeController - error");
 
             services.AddSingleton(logger);
             services.AddLogging();

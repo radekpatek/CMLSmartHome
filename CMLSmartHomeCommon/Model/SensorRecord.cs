@@ -1,5 +1,4 @@
 ﻿using CMLSmartHomeCommon.Enums;
-using CMLSmartHomeCommon.Model;
 
 namespace CMLSmartHomeController.Model
 {

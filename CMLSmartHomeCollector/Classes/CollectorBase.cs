@@ -1,5 +1,6 @@
 ﻿using CMLSmartHomeCollector.Factories;
 using CMLSmartHomeCollector.Interfaces;
+using CMLSmartHomeCollector.Sensors;
 using CMLSmartHomeController.Model;
 using log4net;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace CMLSmartHomeCollector
         public string macAddress { get; set; }
         public string description { get; set; }
         public string location { get; set; }
+        public int readingFrequency { get; set; }
         public List<SensorCollector>  sensors { get; set; }
 
         /// <summary>
@@ -54,12 +56,14 @@ namespace CMLSmartHomeCollector
             name = Dns.GetHostName();
             location = _configuration["Location"];
             description = _configuration["Description"];
+            readingFrequency = int.Parse(_configuration["ReadingFrequency"]);
 
             // Read sensors definition from config file
             var configSensors = _configuration.GetSection("Sensors");
+            var sensorFactory = new SensorFactory(_logger);
             foreach (IConfigurationSection section in configSensors.GetChildren())
             {
-                sensors.Add(SensorFactory.Get(section));
+                sensors.Add(sensorFactory.Get(section));
             }
         }
 
@@ -99,7 +103,7 @@ namespace CMLSmartHomeCollector
         /// </summary>
         public void Run()
         {
-            _logger.Info("Run Collector");
+            _logger.Info("Run Collector - start");
 
             //Collector Initialize
             Initialize();
@@ -107,28 +111,34 @@ namespace CMLSmartHomeCollector
             // Registration to controller and synchronize ID
             RegisterCollectorInController();
 
-            // Read values from sensors
-            Parallel.ForEach(sensors, (sensor) =>
+            while (true)
             {
-                while (true)
+                // Read values from sensors
+                foreach (var sensor in sensors)
                 {
-                    var measureValue = sensor.Measure();
+                    try
+                    {
+                        _logger.Info(string.Format("Sensor {0} before measure", sensor.ToString()));
+                        var measureValue = sensor.Measure(sensor.Type);
+                        _logger.Info(string.Format("Sensor {0} , Value {1}", sensor.ToString(), measureValue));
 
-                    var sensorRecord = new SensorRecord();
+                        var sensorRecord = new SensorRecord();
 
-                    sensorRecord.CollectorId = id;
-                    sensorRecord.SensorId = sensor.Id;
-                    sensorRecord.Unit = sensor.Unit;
-                    sensorRecord.Value = measureValue;
-                    sensorRecord.DateTime = System.DateTime.Now;
+                        sensorRecord.CollectorId = id;
+                        sensorRecord.SensorId = sensor.Id;
+                        sensorRecord.Unit = sensor.Unit;
+                        sensorRecord.Value = measureValue;
+                        sensorRecord.DateTime = System.DateTime.Now;
 
-                    _communicator.SetMeasure(sensorRecord);
-
-                    Thread.Sleep(sensor.ReadingFrequency * 100); // :TODO: musí být 1000
+                        _communicator.SetMeasure(sensorRecord);
+                    }
+                    catch (System.Exception e)
+                    {
+                        _logger.Error(string.Format("Measure Error - Sensor ID {0}, Error: {1}", sensor.Id, e.Message), e);
+                    }
+                    Thread.Sleep(readingFrequency * 1000);
                 }
-
-            });
-
+            };
         }
 
     }

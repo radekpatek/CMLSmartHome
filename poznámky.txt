@@ -3,33 +3,30 @@
 dotnet publish -r debian-arm -f netcoreapp2.0
 
 sudo mount -t cifs -o username=Share,password=share //NB/source
-
-cp -avr /mnt/smb/repos/CMLSmartHome /home/pi/VSProjects
-
-sudo rm -r /var/aspnetcore/CMLSmartHome/*
-sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.0/debian-arm/ /var/aspnetcore/CMLSmartHome
-
-c:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome\bin\Debug\netcoreapp2.0\debian-x64\
-
-cd /var/aspnetcore/CMLSmartHome/debian-arm/publish/
+sudo mount -t cifs -o credentials=/etc/samba/credentials/NB //NB/source
 
 ./var/aspnetcore/CMLSmartHome/CMLSmartHome.dll
 
 sudo nano /etc/systemd/system/CMLSmartHome.service
-sudo journalctl -fu CMLSmartHome.service
-sudo journalctl -fu CMLSmartHomeCollector.service
+sudo journalctl -fu -e CMLSmartHome.service 
+sudo journalctl -fu -e CMLSmartHomeCollector.service
 
 systemctl enable CMLSmartHome.service
 systemctl start CMLSmartHome.service
 systemctl status CMLSmartHome.service
 
-systemctl status WebAPITest.service
-sudo journalctl -fu WebAPITest.service
+systemctl status CMLSmartHomeCollector.service
 
 sudo nano /etc/systemd/system/CMLSmartHome.service
 sudo nano /etc/systemd/system/CMLSmartHomeWeb.service
 sudo nano /etc/systemd/system/CMLSmartHomeCollector.service
 sudo nano /etc/systemd/system/WebAPITest.service
+
+--- VNC -----------------------------------------
+vncserver
+
+---- CMLSmartHomeDashboard
+sudo python3 $HOME/python_projects/WeatherDashboard/WeatherDashboard.py 2>&1 
 
 DB
 ------------
@@ -61,7 +58,7 @@ sudo ./CMLSmartHomeDeploy.sh
 ---- CMLSmartHomeWeb --------------------------------------------------------
 PI:
 sudo service nginx stop
-systemctl stop CMLSmartHomeWeb.service
+sudo systemctl stop CMLSmartHomeWeb.service
 sudo rm -r /var/aspnetcore/CMLSmartHomeWeb/*
 sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHomeWeb/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHomeWeb
 systemctl enable CMLSmartHomeWeb.service
@@ -80,31 +77,7 @@ sudo systemctl status CMLSmartHomeCollector.service
 sudo journalctl -fu CMLSmartHomeCollector.service -e
 sudo ./CMLSmartHomeCollectorDeploy.sh
 
-
----- WebAPITest --------------------------------------------------------
-NB: dotnet publish C:\Users\Radek\source\repos\WebAPITest\WebAPITest.sln -r debian-arm -f netcoreapp2.1
-PI:
-systemctl disenable WebAPITest.service
-sudo service nginx stop
-systemctl stop WebAPITest.service
-sudo rm -r /var/aspnetcore/WebAPITest/*
-sudo cp -avr /mnt/smb/repos/WebAPITest/WebAPITest/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/WebAPITest
-systemctl enable WebAPITest.service
-systemctl start WebAPITest.service
-sudo service nginx start
-
------------- SQL 
-CREATE TABLE `Dashboard` (
-    `Id` bigint NOT NULL AUTO_INCREMENT,
-    `InternalCollectorId` bigint NULL,
-    `OutdoorCollectorId` bigint NULL,
-    CONSTRAINT `PK_Dashboard` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Dashboard_Collectors_InternalCollectorId` FOREIGN KEY (`InternalCollectorId`) REFERENCES `Collectors` (`Id`) ON DELETE NO ACTION,
-    CONSTRAINT `FK_Dashboard_Collectors_OutdoorCollectorId` FOREIGN KEY (`OutdoorCollectorId`) REFERENCES `Collectors` (`Id`) ON DELETE NO ACTION
-);
-CREATE INDEX `IX_Dashboard_InternalCollectorId` ON `Dashboard` (`InternalCollectorId`);
-CREATE INDEX `IX_Dashboard_OutdoorCollectorId` ON `Dashboard` (`OutdoorCollectorId`);
-INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20181103122640_20181103', '2.1.2-rtm-30932');
-
-
+--- Collector Linux dep ---------
+sudo apt-get update
+sudo apt-get install libunwind8
+sudo apt-get install wiringpi

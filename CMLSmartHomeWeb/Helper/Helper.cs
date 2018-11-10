@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace CMLSmartHomeWeb.Helper
 {
-    public class CollectorAPI
+    public class ControllerAPI
     {
 
         public HttpClient Initialize(IConfiguration configuration)

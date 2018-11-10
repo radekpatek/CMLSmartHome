@@ -26,7 +26,7 @@ namespace CMLSmartHomeController.Controllers
         [HttpGet]
         public IEnumerable<Collector> GetCollectors()
         {
-            return _context.Collectors;
+            return _context.Collectors.Include(s => s.Sensors);
         }
 
         [Route("search")]
