@@ -4,6 +4,10 @@ dotnet publish -r debian-arm -f netcoreapp2.0
 
 sudo mount -t cifs -o username=Share,password=share //NB/source
 sudo mount -t cifs -o credentials=/etc/samba/credentials/NB //NB/source
+sudo mount -t cifs -o credentials=/etc/samba/credentials/DISKSTATION //DISKSTATION/Others/Develop
+
+
+
 
 ./var/aspnetcore/CMLSmartHome/CMLSmartHome.dll
 
@@ -43,14 +47,16 @@ https://www.youtube.com/watch?v=wYMdqhid4Fs
 WWW:
 sudo nano /etc/nginx/sites-available/default
 ---- CMLSmartHome --------------------------------------------------------
-NB: dotnet publish -r debian-arm -f netcoreapp2.0
 NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1
+NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1 --output O:\Develop\CMLSmartHome\CMLSmartHomeController\
+
 PI:
 sudo service nginx stop
 sudo journalctl -fu CMLSmartHome.service -e
 sudo systemctl stop CMLSmartHome.service
 sudo rm -r /var/aspnetcore/CMLSmartHome/*
 sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHome
+sudo systemctl status CMLSmartHome.service
 sudo systemctl start CMLSmartHome.service
 sudo service nginx start
 sudo ./CMLSmartHomeDeploy.sh
@@ -61,8 +67,9 @@ sudo service nginx stop
 sudo systemctl stop CMLSmartHomeWeb.service
 sudo rm -r /var/aspnetcore/CMLSmartHomeWeb/*
 sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHomeWeb/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHomeWeb
-systemctl enable CMLSmartHomeWeb.service
-systemctl start CMLSmartHomeWeb.service
+sudo systemctl enable CMLSmartHomeWeb.service
+sudo systemctl status CMLSmartHomeWeb.service
+sudo systemctl start CMLSmartHomeWeb.service
 sudo ./CMLSmartHomeWebDeploy.sh
 
 ---- CMLSmartHomeCollector --------------------------------------------------------
@@ -81,3 +88,11 @@ sudo ./CMLSmartHomeCollectorDeploy.sh
 sudo apt-get update
 sudo apt-get install libunwind8
 sudo apt-get install wiringpi
+
+---- CMLSmartHomeDashboard ----------------------------------------------------
+PI_Zero:
+sudo systemctl stop CMLSmartHomeDashboard.service
+sudo systemctl enable CMLSmartHomeDashboard.service
+sudo systemctl start CMLSmartHomeDashboard.service
+sudo systemctl status CMLSmartHomeDashboard.service
+sudo journalctl -fu CMLSmartHomeDashboard.service -e

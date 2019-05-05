@@ -35,7 +35,7 @@ namespace CMLSmartHomeCollector
                 serviceProvider.GetService<CollectorBase>().Run();
 
 
-                logger.Info("Start CMLSmartHomeCollector");
+                logger.Info("Stop CMLSmartHomeCollector");
             }
             catch (System.Exception e)
             {

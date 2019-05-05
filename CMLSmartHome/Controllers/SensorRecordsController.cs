@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using CMLSmartHomeController.Model;
 using CMLSmartHomeController.Models;
+using System;
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -89,6 +90,8 @@ namespace CMLSmartHomeController.Controllers
         [HttpPost]
         public async Task<IActionResult> PostSensorRecord([FromBody] SensorRecord sensorRecord)
         {
+            _logger.LogInformation("SensorRecords: SensorId:{0},  Value:{1} - Start ", sensorRecord.SensorId, sensorRecord.Value);
+
             var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(sensorRecord);
 
             if (!ModelState.IsValid)
@@ -96,8 +99,11 @@ namespace CMLSmartHomeController.Controllers
                 return BadRequest(ModelState);
             }
 
+            sensorRecord.DateTime = DateTime.Now;
             _context.SensorRecords.Add(sensorRecord);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("SensorRecords - End");
 
             return CreatedAtAction("GetSensorRecord", new { id = sensorRecord.Id }, sensorRecord);
         }

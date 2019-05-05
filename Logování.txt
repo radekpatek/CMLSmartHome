@@ -1,0 +1,3 @@
+https://app.logz.io/#/dashboard/data-sources/Bulk-HTTPS
+username:radek_patek@centrum.cz
+password: koniklec1234

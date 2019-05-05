@@ -20,7 +20,7 @@ namespace CMLSmartHomeWeb.Controllers
 
         ControllerAPI _collectorAPI = new ControllerAPI();
 
-        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageIndex)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.IDSortParm = sortOrder == "Record ID" ? "Record ID Desc" : "Record ID";
@@ -30,12 +30,24 @@ namespace CMLSmartHomeWeb.Controllers
             ViewBag.UnitSortParm = sortOrder == "Unit" ? "Unit Desc" : "Unit";
             ViewBag.DateSortParm = sortOrder == "DateTime" ? "DateTime Desc" : "DateTime";
 
+            if (searchString != null)
+            {
+                pageIndex = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
             var sensorRecords = new List<SensorRecord>();
             var client = _collectorAPI.Initialize(_configuration);
             var response = await client.GetAsync("api/SensorRecords");
             if (response.IsSuccessStatusCode)
             {
                 string jsonResult = response.Content.ReadAsStringAsync().Result;
+
                 sensorRecords = JsonConvert.DeserializeObject<List<SensorRecord>>(jsonResult);
                 sortOrder = "DateTime Desc";
             }
