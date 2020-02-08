@@ -31,8 +31,6 @@ namespace CMLSmartHomeWeb
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddDbContext<CMLSmartHomeWebContext>(options =>
-             //       options.UseSqlServer(Configuration.GetConnectionString("CMLSmartHomeWebContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +54,7 @@ namespace CMLSmartHomeWeb
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Dashboard}/{action=Index}/{id?}"); 
             });
         }
     }

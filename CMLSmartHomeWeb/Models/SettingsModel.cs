@@ -1,5 +1,6 @@
 ﻿using CMLSmartHomeCommon.Model;
 using CMLSmartHomeController.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
 namespace CMLSmartHomeWeb.Models

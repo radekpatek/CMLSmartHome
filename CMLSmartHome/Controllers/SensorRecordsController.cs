@@ -49,6 +49,22 @@ namespace CMLSmartHomeController.Controllers
             return Ok(sensorRecord);
         }
 
+        //[HttpGet("{collectorId}/{sensorId}/{recordDatetimeFrom}/{recordDatetimeTo}")]
+        [Route("search")]
+        [HttpGet]
+        public IEnumerable<SensorRecord> GetSensorRecord([FromQuery] long collectorId, [FromQuery] long sensorId, [FromQuery] DateTime recordDatetimeFrom, [FromQuery] DateTime recordDatetimeTo)
+        {
+            _logger.LogInformation("api/SensorRecords/collectorId={0}&sensorId={1}&recordDatetimeFrom={2}&recordDatetimeFrom={3}", collectorId, sensorId, recordDatetimeFrom, recordDatetimeTo);
+
+             var sensorRecords = _context.SensorRecords.Where(t =>
+                                (collectorId != 0 && t.CollectorId == collectorId) &&
+                                (sensorId != 0 && t.SensorId == sensorId) &&
+                                (recordDatetimeFrom != DateTime.MaxValue && t.DateTime > recordDatetimeFrom)
+                                );
+
+            return sensorRecords;
+        }
+
         // PUT: api/SensorRecords/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSensorRecord([FromRoute] long id, [FromBody] SensorRecord sensorRecord)

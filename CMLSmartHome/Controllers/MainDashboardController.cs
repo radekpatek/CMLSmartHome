@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore;
 using CMLSmartHomeCommon.Enums;
+using System.Collections.Generic;
+using System;
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -27,42 +29,64 @@ namespace CMLSmartHomeController.Controllers
 
             if (_context.Dashboards.Count() > 0)
             {
-                var dashboard = _context.Dashboards.Include(t => t.InternalCollector.Sensors).First();
+                var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
+                                   .First();
 
                 if (dashboard != null)
                 {
-                    var InternalTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
-                    if (InternalTemperaturSensor != null)
+                    // Venkovní senzory
+                    var outdoorSensors = new List<SensorValue>();
+                    foreach (var sensor in dashboard.OutdoorCollector.Sensors)
                     {
-                        mainDashboard.InternalTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                                     && t.SensorId == InternalTemperaturSensor.Id).LastOrDefault()?.Value;
-                    }
+                        var sv = new SensorValue();
+                        sv.Sensor = sensor;
+                        sv.Value = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).LastOrDefault().Value;
 
-                    var InternalHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
-                    if (InternalHumiditySensor != null)
-                    {
-                        mainDashboard.InternalHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                                 && t.SensorId == InternalHumiditySensor.Id).LastOrDefault()?.Value;
+                        outdoorSensors.Add(sv);
                     }
+                    mainDashboard.OutdoorSensorsValue = outdoorSensors.ToArray();
 
-                    var OutdoorTemperaturSensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Temperature).LastOrDefault();
-                    if (OutdoorTemperaturSensor != null)
+                    // Vnitřní senzory
+                    var IndoorCollectors = new List<CollectorValues>();
+                    foreach (var collector in _context.Collectors.Where(t => t.Id != dashboard.OutdoorCollector.Id).Include(t => t.Sensors)) 
                     {
-                        mainDashboard.OutdoorTemperature = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                                 && t.SensorId == OutdoorTemperaturSensor.Id).LastOrDefault()?.Value;
-                    }
+                        var collectorValues = new CollectorValues();
+                        var IndoorSensorValues = new List<SensorValue>();
+                        foreach (var sensor in collector.Sensors)
+                        {
+                            var sv = new SensorValue();
+                            sv.Sensor = sensor;
+                            sv.Value = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).LastOrDefault().Value;
 
-                    var OutdoorHumiditySensor = dashboard.InternalCollector.Sensors.Where(l => l.Type == SensorType.Humidity).LastOrDefault();
-                    if (OutdoorHumiditySensor != null)
-                    {
-                        mainDashboard.OutdoorHumidity = _context.SensorRecords.Where(t => t.CollectorId == dashboard.InternalCollector.Id
-                                                 && t.SensorId == OutdoorHumiditySensor.Id).LastOrDefault()?.Value;
+                            IndoorSensorValues.Add(sv);
+                        }
+                        collectorValues.Sensors = IndoorSensorValues;
+                        collectorValues.Location = collector.Name;
+                        IndoorCollectors.Add(collectorValues);
                     }
+                    mainDashboard.IndoorCollectors = IndoorCollectors.ToArray();
+
+                    // Datum a čas sestavení boardu
+                    mainDashboard.GenerationDateTime = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
 
                 }
             }
       
             return mainDashboard;
         }
+
+        // GET Graphs
+        [Route("{Graphs}")]
+        public DashboardGraphs GetGraps()
+        {
+            var graphs = new DashboardGraphs();
+
+            // Graf venkovní teploty
+            graphs.OutdoorTemperatureGraph = new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff,0xff, 0xff, 0xff, 0xff, 0xff };
+
+            //return System.Text.Encoding.Default.GetString(graphs.OutdoorTemperatureGraph); -- bude-li potřeba posílat jako string
+            return graphs;
+        }
+
     }
 }

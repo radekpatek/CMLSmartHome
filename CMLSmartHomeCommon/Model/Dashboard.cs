@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace CMLSmartHomeCommon.Model
 {
     /// <summary>
@@ -13,12 +15,7 @@ namespace CMLSmartHomeCommon.Model
         public long Id { get; set; }
 
         /// <summary>
-        /// Vnitřní kollektor
-        /// </summary>
-        public Collector InternalCollector { get; set; }
-
-        /// <summary>
-        /// Venkovní kollektor
+        /// Venkovní kolektor
         /// </summary>
         public Collector OutdoorCollector { get; set; }
 

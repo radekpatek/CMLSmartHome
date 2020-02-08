@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CMLSmartHomeCommon.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,24 +10,55 @@ namespace CMLSmartHomeCommon.Classes
     /// </summary>
     public class MainDashboard
     {
-        /// <summary>
-        /// Vnitřní teplota
-        /// </summary>
-        public double? InternalTemperature;
 
         /// <summary>
-        /// Vnitřní vhlkost
+        /// Venkovní hodnoty sebsorů
         /// </summary>
-        public double? InternalHumidity;
+        public SensorValue[] OutdoorSensorsValue;
 
         /// <summary>
-        /// Venkovní teplota
+        /// Vnitřní hodnoty
         /// </summary>
-        public double? OutdoorTemperature;
+        public CollectorValues[] IndoorCollectors;
 
         /// <summary>
-        /// Venkovní vhlkost
+        ///  Datum a čas sestavení boardu
         /// </summary>
-        public double? OutdoorHumidity;
+        public String GenerationDateTime;
+
+
     }
+
+    /// <summary>
+    /// Záznam na sensoru
+    /// </summary>
+    public class SensorValue
+    {
+        /// <summary>
+        /// Sensor
+        /// </summary>
+        public Sensor Sensor;
+
+        /// <summary>
+        /// Hodnota
+        /// </summary>
+        public double Value;
+    }
+
+    /// <summary>
+    /// Záznam na sensoru
+    /// </summary>
+    public class CollectorValues
+    {
+        /// <summary>
+        /// Umístnění zařízení se senzory
+        /// </summary>
+        public string Location;
+
+        /// <summary>
+        /// Seznam senzorů
+        /// </summary>
+        public ICollection<SensorValue> Sensors { get; set; } = new List<SensorValue>();
+    }
+
 }

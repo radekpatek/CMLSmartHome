@@ -4,9 +4,10 @@ dotnet publish -r debian-arm -f netcoreapp2.0
 
 sudo mount -t cifs -o username=Share,password=share //NB/source
 sudo mount -t cifs -o credentials=/etc/samba/credentials/NB //NB/source
+
 sudo mount -t cifs -o credentials=/etc/samba/credentials/DISKSTATION //DISKSTATION/Others/Develop
 
-
+//DISKSTATION/Others/Develop /mnt/smb cifs credentials=/etc/samba/credentials/DISKSTATION 0 0 
 
 
 ./var/aspnetcore/CMLSmartHome/CMLSmartHome.dll
@@ -22,9 +23,11 @@ systemctl status CMLSmartHome.service
 systemctl status CMLSmartHomeCollector.service
 
 sudo nano /etc/systemd/system/CMLSmartHome.service
+sudo nano /etc/systemd/system/CMLSmartHomeController.service
 sudo nano /etc/systemd/system/CMLSmartHomeWeb.service
 sudo nano /etc/systemd/system/CMLSmartHomeCollector.service
 sudo nano /etc/systemd/system/WebAPITest.service
+sudo nano /etc/systemd/system/nginx.service
 
 --- VNC -----------------------------------------
 vncserver
@@ -47,26 +50,40 @@ https://www.youtube.com/watch?v=wYMdqhid4Fs
 WWW:
 sudo nano /etc/nginx/sites-available/default
 ---- CMLSmartHome --------------------------------------------------------
-NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1
-NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1 --output O:\Develop\CMLSmartHome\CMLSmartHomeController\
+--NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1
+--NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome.sln -r debian-arm -f netcoreapp2.1 -- force --output --O:\Develop\CMLSmartHome\CMLSmartHomeController\
+NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHome\CMLSmartHomeController.csproj --output O:\Develop\CMLSmartHome\CMLSmartHomeController\
+NB: dotnet publish C:\Users\Radek\source\repos\CMLSmartHome\CMLSmartHomeWeb\CMLSmartHomeWeb.csproj --output O:\Develop\CMLSmartHome\CMLSmartHomeWeb\
+
+sudo systemctl stop nginx.service
+sudo systemctl status nginx.service
+sudo service nginx restart
 
 PI:
 sudo service nginx stop
-sudo journalctl -fu CMLSmartHome.service -e
-sudo systemctl stop CMLSmartHome.service
-sudo rm -r /var/aspnetcore/CMLSmartHome/*
-sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHome
-sudo systemctl status CMLSmartHome.service
-sudo systemctl start CMLSmartHome.service
+sudo journalctl -fu CMLSmartHomeController.service -e
+sudo systemctl stop CMLSmartHomeController.service
+--sudo rm -r /var/aspnetcore/CMLSmartHome/*
+--sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHome/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHome
+sudo rm -r /var/aspnetcore/CMLSmartHomeController/*
+sudo cp -avr /mnt/smb/CMLSmartHome/CMLSmartHomeController/* /var/aspnetcore/CMLSmartHomeController
+sudo systemctl status CMLSmartHomeController.service
+sudo systemctl start CMLSmartHomeController.service
 sudo service nginx start
-sudo ./CMLSmartHomeDeploy.sh
+sudo /var/aspnetcore/CMLSmartHomeControllerDeploy.sh
+
+sudo service nginx stop
+sudo systemctl stop CMLSmartHomeController.service
+sudo systemctl start CMLSmartHomeController.service
+sudo systemctl status CMLSmartHomeController.service
+sudo journalctl -fu CMLSmartHomeController.service -e
 
 ---- CMLSmartHomeWeb --------------------------------------------------------
 PI:
 sudo service nginx stop
 sudo systemctl stop CMLSmartHomeWeb.service
 sudo rm -r /var/aspnetcore/CMLSmartHomeWeb/*
-sudo cp -avr /mnt/smb/repos/CMLSmartHome/CMLSmartHomeWeb/bin/Debug/netcoreapp2.1/debian-arm/publish/* /var/aspnetcore/CMLSmartHomeWeb
+sudo cp -avr /mnt/smb/CMLSmartHome/CMLSmartHomeWeb/* /var/aspnetcore/CMLSmartHomeWeb
 sudo systemctl enable CMLSmartHomeWeb.service
 sudo systemctl status CMLSmartHomeWeb.service
 sudo systemctl start CMLSmartHomeWeb.service

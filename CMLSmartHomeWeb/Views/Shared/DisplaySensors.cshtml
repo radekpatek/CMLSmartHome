@@ -1,0 +1,11 @@
+﻿@model SensorRecordModel
+
+<option value="">-- Vyber senzor --</option>
+
+@if (ViewBag.SensorList != null)
+{
+    foreach (var item in ViewBag.SensorList)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+}

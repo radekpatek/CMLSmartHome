@@ -33,6 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="CMLSmartHomeController.log">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="~%24stalace prvků CMLSmartHome.docx">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

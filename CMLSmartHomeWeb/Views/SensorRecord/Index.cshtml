@@ -1,17 +1,167 @@
-﻿@model IEnumerable<CMLSmartHomeController.Model.SensorRecord>
+﻿@model SensorRecordModel
 
 @{
     ViewData["Title"] = "SensorRecords";
 }
 
-@{
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model
-                    .Where(t => t.Unit == CMLSmartHomeCommon.Enums.UnitType.CelsiusDegree)
-                    .Select(x => x.DateTime).ToList());
-    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model
-                    .Where(t => t.Unit == CMLSmartHomeCommon.Enums.UnitType.CelsiusDegree)
-                    .Select(x => x.Value).ToList());
-    ViewData["Title"] = "Line Chart";
+<h2>Záznamy měření</h2>
+
+@using (Html.BeginForm())
+{
+    <form asp-controller="SensorRecord" asp-action="Index" method="get">
+        @Html.ValidationSummary(true)
+        <p>
+            <table>
+                <tr>
+                    <td>Místo </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.CollectorID, ViewBag.CollectorList as SelectList, "-- Vyber místo --", new { id = "CollectorID", @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sensor</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SensorID, ViewBag.SensorList as SelectList, "-- Vyber senzor --", new { id = "SensorID", @class = "form-control" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Čas záznamu - od </td>
+                    <td>
+                        @Html.EditorFor(m => m.RecordDatetimeFrom, new { @value = @DateTime.Now.ToString("0:dd.MM.yyyy HH:mm"), id = "RecordDatetimeFrom", @class = "form-control datepicker" })
+                        @Html.ValidationMessageFor(m => m.RecordDatetimeFrom)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Čas záznamu - do </td>
+                    <td>
+                        @Html.EditorFor(m => m.RecordDatetimeTo, new { id = "RecordDatetimeTo", @class = "form-control datepicker" })
+                        @Html.ValidationMessageFor(m => m.RecordDatetimeTo)
+                    </td>
+                </tr>
+                <tr></tr>
+            </table>
+
+            <input type="submit" value="Filter" />
+        </p>
+    </form>
+}
+@section scripts
+    {
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#CollectorID").change(function () {
+                var collectorId = $(this).val();
+                $.ajax({
+                    type: "get",
+                    url: "/SensorRecord/GetSensorListAsync?CollectorId=" + collectorId,
+                    contentType: "html",
+                    success: function (response) {
+                        $("#SensorID").empty();
+                        $("#SensorID").append(response);
+                    }
+                })
+            })
+        })
+
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    @{
+
+        var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.SensorRecords?
+                        .OrderBy(y => y.DateTime).Select(x => x.DateTime.ToString("dd.MM.yyyy HH:mm")).ToList());
+        var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.SensorRecords?
+                        .OrderBy(y => y.DateTime).Select(x => x.Value).ToList());
+
+        var YMax = (Model.SensorRecords == null || Model.SensorRecords?.Count() == 0) ? 10 : Math.Ceiling(Model.SensorRecords.Max(x => x.Value));
+        var YMin = (Model.SensorRecords == null || Model.SensorRecords?.Count() == 0) ? 0 : Math.Floor(Model.SensorRecords.Min(x => x.Value));
+
+        ViewData["Title"] = "Line Chart";
+    }
+
+
+    <script type="text/javascript">
+            $(function () {
+                var chartName = "chart";
+                var ctx = document.getElementById(chartName).getContext('2d');
+                var data = {
+                        labels: @Html.Raw(XLabels),
+                        datasets: [{
+                            label: "Graf",
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 0, 0)',
+                                'rgba(0, 255, 0)',
+                                'rgba(0, 0, 255)',
+                                'rgba(192, 192, 192)',
+                                'rgba(255, 255, 0)',
+                                'rgba(255, 0, 255)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(255, 0, 0)',
+                                'rgba(0, 255, 0)',
+                                'rgba(0, 0, 255)',
+                                'rgba(192, 192, 192)',
+                                'rgba(255, 255, 0)',
+                                'rgba(255, 0, 255)'
+                            ],
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                            data: @Html.Raw(YValues),
+                        }]
+                };
+
+                var options = {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                max:@Html.Raw(YMax),
+                                min:@Html.Raw(YMin),
+                                beginAtZero: false
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "rgba(255,99,164,0.2)"
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                min:0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                };
+
+                var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'line'
+
+                });
+            });
+    </script>
 }
 
 <!DOCTYPE html>
@@ -29,85 +179,6 @@
     </div>
 </body>
 </html>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
-<script type="text/javascript">
-
-        $(function () {
-            var chartName = "chart";
-            var ctx = document.getElementById(chartName).getContext('2d');
-            var data = {
-                    labels: @Html.Raw(XLabels),
-                    datasets: [{
-                        label: "Countries Chart",
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)',
-                            'rgba(255, 0, 0)',
-                            'rgba(0, 255, 0)',
-                            'rgba(0, 0, 255)',
-                            'rgba(192, 192, 192)',
-                            'rgba(255, 255, 0)',
-                            'rgba(255, 0, 255)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(255, 0, 0)',
-                            'rgba(0, 255, 0)',
-                            'rgba(0, 0, 255)',
-                            'rgba(192, 192, 192)',
-                            'rgba(255, 255, 0)',
-                            'rgba(255, 0, 255)'
-                        ],
-                        borderWidth: 1,
-                        data: @Html.Raw(YValues)
-                    }]
-            };
-
-            var options = {
-                maintainAspectRatio: false,
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            min: 15,
-                            beginAtZero: false
-                        },
-                        gridLines: {
-                            display: true,
-                            color: "rgba(255,99,164,0.2)"
-                        }
-                    }],
-                    xAxes: [{
-                        ticks: {
-                            min: 0,
-                            beginAtZero: true
-                        },
-                        gridLines: {
-                            display: false
-                        }
-                    }]
-                }
-            };
-
-            var myChart = new  Chart(ctx, {
-                options: options,
-                data: data,
-                type:'line'
-
-            });
-        });
-</script>
 
 <h2>Sensor Records</h2>
 
@@ -136,32 +207,52 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model.SensorRecords != null)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CollectorId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SensorId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Value)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Unit)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateTime)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+            foreach (var item in Model.SensorRecords)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CollectorId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SensorId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Value)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Unit)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateTime)
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
+
+@*styl je také definován v css/validation.css, ale odkaz v _Layout.cshtml na css/validation.css nefunguje*@
+<style type="text/css">
+    .field-validation-error {
+        color: #f00;
+    }
+
+    .validation-summary-errors {
+        color: #f00;
+        font-weight: bold;
+    }
+
+    .input-validation-error {
+        border: 2px solid #f00;
+        background-color: #fee;
+    }
+
+    input[type="checkbox"].input-validation-error {
+        outline: 2px solid #f00;
+    }
+</style>

@@ -1,0 +1,86 @@
+﻿@model CMLSmartHomeCommon.Classes.MainDashboard
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Venku</h2>
+@{
+    double outTemperatureValue = double.NaN;
+    double outHumidityValue = double.NaN;
+    foreach (var sensorValue in Model.OutdoorSensorsValue)
+    {
+        var type = sensorValue.Sensor.Type;
+
+        switch (type)
+        {
+            case CMLSmartHomeCommon.Enums.SensorType.Temperature:
+                // Temperature
+                outTemperatureValue = sensorValue.Value;
+                break;
+            case CMLSmartHomeCommon.Enums.SensorType.Humidity:
+                // Humidity
+                outHumidityValue = sensorValue.Value;
+                break;
+        }
+    }
+}
+
+Teplota: <b>@outTemperatureValue°C</b>
+<span class="tab">Vlhkost:</span><b>@outHumidityValue%</b>
+
+<h2>Doma</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Místo</th>
+            <th>Teplota</th>
+            <th>Vlhkost</th>
+            <th>CO2</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var collector in Model.IndoorCollectors)
+        {
+            double inTemperatureValue = double.NaN;
+            double inHumidityValue = double.NaN;
+            double inCO2Value = double.NaN;
+            foreach (var sensorValue in collector.Sensors)
+            {
+                var type = sensorValue.Sensor.Type;
+
+                switch (type)
+                {
+                    case CMLSmartHomeCommon.Enums.SensorType.Temperature:
+                        // Temperature
+                        inTemperatureValue = sensorValue.Value;
+                        break;
+                    case CMLSmartHomeCommon.Enums.SensorType.Humidity:
+                        // Humidity
+                        inHumidityValue = sensorValue.Value;
+                        break;
+                    case CMLSmartHomeCommon.Enums.SensorType.CO2:
+                        // CO2
+                        inCO2Value = sensorValue.Value;
+                        break;
+                }
+            }
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => collector.Location)
+                </td>
+                <td>
+                    @inTemperatureValue
+                </td>
+                <td>
+                    @inHumidityValue
+                </td>
+                <td>
+                    @inCO2Value
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -35,6 +35,9 @@ namespace CMLSmartHomeController.Controllers
         public async Task<IActionResult> GetCollectorsByQuery(string macAddress)
 #pragma warning restore CS1998 // V této asynchronní metodě chybí operátory await a spustí se synchronně.
         {
+
+            _logger.LogInformation("api/Controllers/search macAddress={0}", macAddress);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -50,17 +53,19 @@ namespace CMLSmartHomeController.Controllers
 
             return Ok(collector);
         }
-
+        
         // GET: api/Collectors/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCollector([FromRoute] long id)
         {
+            _context.Collectors.Include(t => t.Sensors);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var collector = await _context.Collectors.FindAsync(id);
+            var collector = await _context.Collectors.Where(t => t.Id == id).Include(t => t.Sensors).FirstOrDefaultAsync();
 
             if (collector == null)
             {
@@ -69,7 +74,7 @@ namespace CMLSmartHomeController.Controllers
 
             return Ok(collector);
         }
-
+        
         // PUT: api/Collectors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCollector([FromRoute] long id, [FromBody] Collector collector)
