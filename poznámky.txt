@@ -87,7 +87,11 @@ sudo cp -avr /mnt/smb/CMLSmartHome/CMLSmartHomeWeb/* /var/aspnetcore/CMLSmartHom
 sudo systemctl enable CMLSmartHomeWeb.service
 sudo systemctl status CMLSmartHomeWeb.service
 sudo systemctl start CMLSmartHomeWeb.service
-sudo ./CMLSmartHomeWebDeploy.sh
+sudo service nginx start
+sudo /var/aspnetcore/CMLSmartHomeWebDeploy.sh
+
+sudo nano /var/aspnetcore/CMLSmartHomeWebDeploy.sh
+
 
 ---- CMLSmartHomeCollector --------------------------------------------------------
 PI:
