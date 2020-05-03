@@ -8,6 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using Microsoft.Extensions.Hosting;
+using Quartz.Spi;
+using CMLSmartHomeController.JobScheduler;
+using Quartz;
+using Quartz.Impl;
+using CMLSmartHomeController.JobScheduler.Jobs;
 
 namespace CMLSmartHomeController
 {
@@ -26,7 +32,26 @@ namespace CMLSmartHomeController
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                            options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .AddNewtonsoftJson();
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
+            // Add Quartz services
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            // Add our job
+            services.AddSingleton<OpenWeatherJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(OpenWeatherJob),
+             //   cronExpression: "0 0 0/1 * * ?")); // run every 1 hour
+              cronExpression: "0/30 * * * * ?")); // run every 5 seconds
+             // cronExpression: "0 0/5 * * * ?")); // run every 5 minutess
+
+            //QuartzService
+            services.AddHostedService<QuartzHostedService>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -38,7 +63,7 @@ namespace CMLSmartHomeController
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -51,17 +76,23 @@ namespace CMLSmartHomeController
             }
             else
             {
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
-            loggerFactory.AddLog4Net();
-            loggerFactory.AddDebug();
             //app.UseHttpsRedirection();
-
             app.UseStaticFiles();
+
+            app.UseRouting();
             app.UseAuthentication();
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            loggerFactory.AddLog4Net();
+                                    
         }
     }
 }

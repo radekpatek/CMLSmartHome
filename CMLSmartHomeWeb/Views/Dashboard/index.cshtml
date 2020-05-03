@@ -84,3 +84,149 @@ Teplota: <b>@outTemperatureValue°C</b>
         }
     </tbody>
 </table>
+
+@section scripts
+{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    @{
+
+        var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.TemperatureForecast.Hour);
+        var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.TemperatureForecast.Values);
+        var YValuesSrazky = Newtonsoft.Json.JsonConvert.SerializeObject(Model.PrecipitationForecast.Values);
+
+        var YMax = Model.TemperatureForecast.Values.Max();
+        var YMin = Model.TemperatureForecast.Values.Min();
+
+        ViewData["Title"] = "Předpověď počasí - po hodinách (48h)";
+
+    }
+
+    <script type="text/javascript">
+            $(function () {
+                var chartName = "chart";
+                var ctx = document.getElementById(chartName).getContext('2d');
+                var data = {
+                    datasets: [{
+                            type: 'line',
+                            label: "Teplota",
+                            fill: false,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 0, 0)',
+                                'rgba(0, 255, 0)',
+                                'rgba(0, 0, 255)',
+                                'rgba(192, 192, 192)',
+                                'rgba(255, 255, 0)',
+                                'rgba(255, 0, 255)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(255, 0, 0)',
+                                'rgba(0, 255, 0)',
+                                'rgba(0, 0, 255)',
+                                'rgba(192, 192, 192)',
+                                'rgba(255, 255, 0)',
+                                'rgba(255, 0, 255)'
+                            ],
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                            data: @Html.Raw(YValues),
+                            yAxisID: 'left-axis',
+                            order: 1
+                        },
+                        {
+                            label: "Srážky",
+                            fill: true,
+                            backgroundColor: 'rgb(54, 162, 235)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            data: @Html.Raw(YValuesSrazky),
+                            yAxisID: 'right-axis',
+                            type: 'bar',
+                            order: 2
+                        }],
+                        labels: @Html.Raw(XLabels)
+                };
+
+                var options = {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    title: { display: false },
+                    tooltips: { mode: 'index', intersect: false },
+                    scales:
+                    {
+                        yAxes: [{
+                            type: 'linear',
+                            id: 'left-axis',
+                            display: true,
+                            position: 'left',
+                            scaleLabel: { display: true, labelString: '°C' },
+                            ticks: {
+                                max:@Html.Raw(YMax),
+                                min:@Html.Raw(YMin),
+                                beginAtZero: false
+                             },
+                        },
+                        {
+                            type: 'linear',
+                            id: 'right-axis',
+                            display: true,
+                            position: 'right',
+                            scaleLabel: { display: true, labelString: 'mm' },
+                            ticks: {
+                                max: 2,
+                                min: 0,
+                                beginAtZero: false
+                            },
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                min:0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                         }]
+                    }
+                };
+
+                var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'bar'
+
+                });
+            });
+    </script>
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Line</title>
+</head>
+<body>
+    <h2>Předpověď počasí</h2>
+    <div class="box-body">
+
+        <div class="chart-container">
+            <canvas id="chart" style="width:100%; height:500px"></canvas>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,11 +2,10 @@
 using CMLSmartHomeController.Models;
 using CMLSmartHomeCommon.Classes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore;
-using CMLSmartHomeCommon.Enums;
 using System.Collections.Generic;
 using System;
+using static CMLSmartHomeCommon.Model.WeatherForecast;
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -65,6 +64,23 @@ namespace CMLSmartHomeController.Controllers
                         IndoorCollectors.Add(collectorValues);
                     }
                     mainDashboard.IndoorCollectors = IndoorCollectors.ToArray();
+
+                    // Přepověď teploty a srážek
+                    if (_context.WeatherForecast != null)
+                    {
+                        var weatherForecastId = _context.WeatherForecast.LastOrDefault().Id;
+
+                        var hourlyForecast = _context.WeatherForecastHourlyState.Where(t => t.WeatherForecastId == weatherForecastId)
+                            .OrderBy(m => m.DateTime);
+
+                        mainDashboard.TemperatureForecast = new MainDashboard.HourlyForecast();
+                        mainDashboard.TemperatureForecast.Hour = hourlyForecast.Select(t => t.DateTime.ToString("HH")).ToArray();
+                        mainDashboard.TemperatureForecast.Values = hourlyForecast.Select(t => t.Temperature).ToArray();
+
+                        mainDashboard.PrecipitationForecast = new MainDashboard.HourlyForecast();
+                        mainDashboard.PrecipitationForecast.Hour = hourlyForecast.Select(t => t.DateTime.ToString("HH")).ToArray();
+                        mainDashboard.PrecipitationForecast.Values = hourlyForecast.Select(t => t.Rain + t.Snow).ToArray();
+                    }
 
                     // Datum a čas sestavení boardu
                     mainDashboard.GenerationDateTime = DateTime.Now.ToString("dd.MM.yyyy HH:mm");

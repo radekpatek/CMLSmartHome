@@ -41,6 +41,8 @@ GRANT ALL PRIVILEGES ON smarthome.* TO 'root'@'localhost';
 
 VisualStudio
 ------------
+Open the Package Manager Console from Tools → Library Package Manager → Package Manager Console
+//enable-migrations
 1.krok add-migration
 2.krok update-database -verbose
 
