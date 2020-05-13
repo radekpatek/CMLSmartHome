@@ -74,11 +74,11 @@ namespace CMLSmartHomeController.Controllers
                             .OrderBy(m => m.DateTime);
 
                         mainDashboard.TemperatureForecast = new MainDashboard.HourlyForecast();
-                        mainDashboard.TemperatureForecast.Hour = hourlyForecast.Select(t => t.DateTime.ToString("HH")).ToArray();
+                        mainDashboard.TemperatureForecast.Hour = hourlyForecast.Select(t => t.DateTime.Hour.ToString()).ToArray();
                         mainDashboard.TemperatureForecast.Values = hourlyForecast.Select(t => t.Temperature).ToArray();
 
                         mainDashboard.PrecipitationForecast = new MainDashboard.HourlyForecast();
-                        mainDashboard.PrecipitationForecast.Hour = hourlyForecast.Select(t => t.DateTime.ToString("HH")).ToArray();
+                        mainDashboard.PrecipitationForecast.Hour = hourlyForecast.Select(t => t.DateTime.Hour.ToString()).ToArray();
                         mainDashboard.PrecipitationForecast.Values = hourlyForecast.Select(t => t.Rain + t.Snow).ToArray();
                     }
 

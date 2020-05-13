@@ -234,9 +234,6 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
                     _context.WeatherForecast.Add(weatherForecast);
                     _context.SaveChanges();
 
-                    var chart = new Chart();
-
-
                 }
             }
             catch (Exception ex)
