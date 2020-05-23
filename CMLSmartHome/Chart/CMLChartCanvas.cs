@@ -5,21 +5,21 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
-using System.Text;
 
-namespace GraphToBitmap.Chart
+namespace CMLSmartHomeController.Chart
 {
     public class CMLChartCanvas
     {
         public int Width { get; }
         public int Height { get; }
+        public string Name { get; set; }
 
         private Graphics _canvas;
         private Bitmap _image;
 
         private const double offsetX = 0.9;
-        private double offsetY = 0.9;
+        private double offsetYBottom = 0.8;
+        private double offsetYTop = 0.1;
 
         internal CMLChartCanvas(Bitmap image)
         {
@@ -114,7 +114,7 @@ namespace GraphToBitmap.Chart
         /// <summary>
         /// Vyhreslení křívek grafu
         /// </summary>
-        internal void DrawChartValues(List<CMLYAsix> yAsixs)
+        internal void DrawChartValues(List<CMLChartYAsix> yAsixs)
         {
             foreach (var yAsix in yAsixs)
             {
@@ -136,14 +136,15 @@ namespace GraphToBitmap.Chart
         /// Vykreslení hodnot čárového grafu
         /// </summary>
         /// <param name="yAsix"></param>
-        private void DrawLineChartValues(CMLYAsix yAsix)
+        private void DrawLineChartValues(CMLChartYAsix yAsix)
         {
             if (yAsix != null)
             {
                 var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
                 var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixMaxPointY = Height - (int)Math.Floor(Height * offsetY);
-                var asixMinPointY = (int)Math.Floor(Height * offsetY);
+                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
+                //var asixMaxPointY = Height - (int)Math.Floor(Height * offsetYBottom);
+                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
 
                 var pen = new Pen(yAsix.BorderColor);
                 PointF[] bezierPoints = new PointF[yAsix.Values.Length+1];
@@ -155,7 +156,7 @@ namespace GraphToBitmap.Chart
                     var pointHeight = ((asixMinPointY - asixMaxPointY) * valuePart);
 
                     var x = (float)(distance + asixStartPointX);
-                    var y = (float)((Height * offsetY) - pointHeight);
+                    var y = (float)((Height * offsetYBottom) - pointHeight);
                     bezierPoints[i] = new PointF(x, y);
                 }
                 bezierPoints[yAsix.Values.Length] = bezierPoints[yAsix.Values.Length-1];
@@ -168,14 +169,15 @@ namespace GraphToBitmap.Chart
         /// Vykreslení hodnot sloupcového grafu
         /// </summary>
         /// <param name="yAsix"></param>
-        private void DrawBarChartValues(CMLYAsix yAsix)
+        private void DrawBarChartValues(CMLChartYAsix yAsix)
         {
             if (yAsix != null)
             {
                 var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
                 var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixMaxPointY = Height - (int)Math.Floor(Height * offsetY);
-                var asixMinPointY = (int)Math.Floor(Height * offsetY);
+                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
+                //var asixMaxPointY = Height - (int)Math.Floor(Height * offsetYBottom);
+                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
 
                 for (int i = 0; i < yAsix.Values.Length; i++)
                 {
@@ -184,7 +186,7 @@ namespace GraphToBitmap.Chart
                     var barHeight = (int)((asixMinPointY - asixMaxPointY) * valuePart);
 
                     var x = (int)(distance + asixStartPointX);
-                    var y = (int)Math.Floor(Height * offsetY) - barHeight;
+                    var y = (int)Math.Floor(Height * offsetYBottom) - barHeight;
                     var width = (int)(((double) 1 / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX));
 
                     var pen = new Pen(yAsix.BorderColor);
@@ -207,11 +209,13 @@ namespace GraphToBitmap.Chart
         {
             if (!string.IsNullOrEmpty(label))
             {
-                var labelFont = new Font(new FontFamily("Microsoft Sans Serif"), 8, FontStyle.Regular);
+                Name = label;
+
+                var labelFont = new Font(new FontFamily("Lucida Sans"), 9, FontStyle.Regular);
                 var labelMeasure = _canvas.MeasureString(label, labelFont);
 
                 var x = Width/2 - (labelMeasure.Width / 2);
-                var y = labelMeasure.Height;
+                var y = 0;
 
                 _canvas.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
                 _canvas.DrawString(label,
@@ -224,7 +228,7 @@ namespace GraphToBitmap.Chart
         /// Vykreslení osy Y
         /// </summary>
         /// <param name="yAsixs"></param>
-        internal void DrawYAsixs(List<CMLYAsix> yAsixs)
+        internal void DrawYAsixs(List<CMLChartYAsix> yAsixs)
         {
             foreach (var yAsix in yAsixs)
             {
@@ -243,8 +247,9 @@ namespace GraphToBitmap.Chart
                     asixEndPointX = (int)Math.Floor(Width * offsetX);
                 }
 
-                var asixStartPointY = Height - (int)Math.Floor(Height * offsetY);
-                var asixEndPointY = (int)Math.Floor(Height * offsetY);
+                //var asixStartPointY = Height - (int)Math.Floor(Height * offsetY);
+                var asixStartPointY = (int)Math.Floor(Height * offsetYTop); ;
+                var asixEndPointY = (int)Math.Floor(Height * offsetYBottom);
 
                 var pen = new Pen(Brushes.Black);
 
@@ -270,14 +275,17 @@ namespace GraphToBitmap.Chart
                         asixDescEndPointX = (int)Math.Floor(Width * offsetX) + separatorLength;
                     }
 
-                    var length = (int)Math.Floor(Height * (2 * offsetY - 1));
-                    var asixDescStartPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
-                    var asixDescEndPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
+                    //var length = (int)Math.Floor(Height * (2 * offsetY - 1));
+                    var length = (int)Math.Floor(Height * (offsetYBottom - offsetYTop));
+                    //var asixDescStartPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
+                    var asixDescStartPointY = (int)Math.Floor(Height * offsetYBottom) - (int)(koef * length);
+                    //var asixDescEndPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
+                    var asixDescEndPointY = (int)Math.Floor(Height * offsetYBottom) - (int)(koef * length);
 
                     _canvas.DrawLines(pen, new Point[] { new Point(asixDescStartPointX, asixDescStartPointY), new Point(asixDescEndPointX, asixDescEndPointY) });
 
                     // Popisky
-                    var labelFont = new Font(new FontFamily("Microsoft Sans Serif"), 7, FontStyle.Regular);
+                    var labelFont = new Font(new FontFamily("Verdana"), 10, FontStyle.Regular);
 
                     var lengthDesc = yAsix.MaxValue - yAsix.MinValue;
                     var label = (yAsix.MinValue + koef * lengthDesc).ToString("#0.0");
@@ -303,7 +311,7 @@ namespace GraphToBitmap.Chart
                 // Popiska osy
                 if (!string.IsNullOrEmpty(yAsix.Label))
                 {
-                    var labelFont = new Font(new FontFamily("Microsoft Sans Serif"), 8, FontStyle.Regular);
+                    var labelFont = new Font(new FontFamily("Lucida Sans"), 9, FontStyle.Regular);
                     var labelMeasure = _canvas.MeasureString(yAsix.Label, labelFont);
 
                     GraphicsState state = _canvas.Save();
@@ -337,7 +345,7 @@ namespace GraphToBitmap.Chart
         /// Vykreslení osy X
         /// </summary>
         /// <param name="xAsix"></param>
-        internal void DrawXAsix(CMLXAsix xAsix)
+        internal void DrawXAsix(CMLChartXAsix xAsix)
         {
             const int separatorLength = 5;
 
@@ -345,8 +353,8 @@ namespace GraphToBitmap.Chart
             {
                 var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
                 var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixStartPointY = (int)Math.Floor(Height * offsetY);                
-                var asixXEndPointY = (int)Math.Floor(Height * offsetY);
+                var asixStartPointY = (int)Math.Floor(Height * offsetYBottom);                
+                var asixXEndPointY = (int)Math.Floor(Height * offsetYBottom);
 
                 var pen = new Pen(Brushes.Black);
 
@@ -389,7 +397,7 @@ namespace GraphToBitmap.Chart
                             case "6":
                             case "12":
                             case "18":
-                                var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 7, FontStyle.Regular);
+                                var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 8, FontStyle.Regular);
                                 var x = startPointX;
                                 var y = startPointY + separatorLength - 2;
 
@@ -402,7 +410,7 @@ namespace GraphToBitmap.Chart
                         {
                             den++;
 
-                            var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 7, FontStyle.Regular);
+                            var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 10, FontStyle.Regular);
 
                             var x = startPointX;
                             var y = startPointY + (int)2.5*separatorLength;

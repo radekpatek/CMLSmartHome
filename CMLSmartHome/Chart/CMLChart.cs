@@ -3,14 +3,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace GraphToBitmap.Chart
+namespace CMLSmartHomeController.Chart
 {
     public class CMLChart   
     {
         public string Label { get; set; }
 
-        public CMLXAsix XAsix { get; set; }
-        public List<CMLYAsix> YAsixs { get; set; }
+        public CMLChartXAsix XAsix { get; set; }
+        public List<CMLChartYAsix> YAsixs { get; set; }
 
         /// <summary>
         /// Typ grafu

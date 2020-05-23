@@ -1,10 +1,9 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 
-namespace GraphToBitmap.Chart
+namespace CMLSmartHomeController.Chart
 {
-    public class CMLYAsix
+    public class CMLChartYAsix
     {
         public string Label { get; set; }
         public bool Fill { get; set; }
@@ -17,7 +16,7 @@ namespace GraphToBitmap.Chart
         public PresentationType Type { get; set; }
         public Location Location { get; set; }
 
-        public CMLYAsix(double[] values)
+        public CMLChartYAsix(double[] values)
         {
             Fill = true;
             BackgroundColor = Color.Black;
@@ -32,7 +31,7 @@ namespace GraphToBitmap.Chart
             }
         }
 
-        public CMLYAsix(string label, bool fill, Color backgroundColor, Color borderColor, double[] values, int id, PresentationType type, Location location)
+        public CMLChartYAsix(string label, bool fill, Color backgroundColor, Color borderColor, double[] values, int id, PresentationType type, Location location)
         {
             Label = label;
             Fill = fill;
@@ -49,10 +48,7 @@ namespace GraphToBitmap.Chart
             }
         }
     }
-}
 
-namespace GraphToBitmap
-{
     public enum PresentationType
     {
         Bar,
@@ -65,4 +61,6 @@ namespace GraphToBitmap
         Right
     }
 }
+
+
 

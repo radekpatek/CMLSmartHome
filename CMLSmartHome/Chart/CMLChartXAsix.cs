@@ -1,36 +1,33 @@
 ﻿using System.Linq;
 
-namespace GraphToBitmap.Chart
+namespace CMLSmartHomeController.Chart
 {
-    public class CMLXAsix
+    public class CMLChartXAsix
     {
         public string[] Values { get; set; }
 
         public CMLValuesType ValuesType { get; set; }
 
-        public CMLXAsix()
+        public CMLChartXAsix()
         {
             ValuesType = CMLValuesType.String;
         }
-        public CMLXAsix(string[] values, CMLValuesType valuesType)
+        public CMLChartXAsix(string[] values, CMLValuesType valuesType)
         {
             Values = values;
             ValuesType = valuesType;
         }
 
-        public CMLXAsix(double[] values, CMLValuesType valuesType)
+        public CMLChartXAsix(double[] values, CMLValuesType valuesType)
         {
             Values = values.Select(x => x.ToString()).ToArray();
             ValuesType = valuesType;
         }
     }
-}
-
-namespace GraphToBitmap
-{
     public enum CMLValuesType
     {
         Hourly,
         String
     }
+
 }

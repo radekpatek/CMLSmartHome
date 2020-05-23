@@ -1,7 +1,7 @@
 ﻿using CMLSmartHomeController.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,7 @@ using CMLSmartHomeController.JobScheduler;
 using Quartz;
 using Quartz.Impl;
 using CMLSmartHomeController.JobScheduler.Jobs;
+
 
 namespace CMLSmartHomeController
 {
@@ -46,8 +47,8 @@ namespace CMLSmartHomeController
             services.AddSingleton<OpenWeatherJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(OpenWeatherJob),
-             //   cronExpression: "0 0 0/1 * * ?")); // run every 1 hour
-              cronExpression: "0/30 * * * * ?")); // run every 5 seconds
+                cronExpression: "0 0 0/1 * * ?")); // run every 1 hour
+             // cronExpression: "0/30 * * * * ?")); // run every 5 seconds
              // cronExpression: "0 0/5 * * * ?")); // run every 5 minutess
 
             //QuartzService
@@ -59,6 +60,12 @@ namespace CMLSmartHomeController
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                 options.ForwardLimit = 2;
                 options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+            });
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
         }
 
@@ -82,6 +89,17 @@ namespace CMLSmartHomeController
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
             app.UseAuthentication();

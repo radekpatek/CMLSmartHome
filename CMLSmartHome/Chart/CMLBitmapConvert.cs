@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace GraphToBitmap.BitmapCnv
+namespace CMLSmartHomeController.Chart
 {
     public class BitmapConvert
     {
@@ -49,6 +49,46 @@ namespace GraphToBitmap.BitmapCnv
             }
 
             return bitmap.ToArray();
+            /*
+            List<sbyte> bitmap1 = new List<sbyte>();
+            bitmap1.Add(0);
+            bitmap1.Add(0);
+            bitmap1.Add(0);
+            bitmap1.Add(0);
+            return bitmap1.ToArray();
+            */
+
+        }
+
+        /// <summary>
+        /// Získá obrázek v podobě řetězce hexa znaků
+        /// </summary>
+        /// <returns></returns>
+        public string GetBitmapByString()
+        {
+            StringBuilder bitmap = new StringBuilder();
+
+            var bitmapByteArray = GetBitmapByByteArray();
+
+            bitmap.Append("{[0X");
+            bitmap.Append(BitConverter.ToString(bitmapByteArray).Replace("-", ",0X"));
+            bitmap.Append("]};");
+
+            return bitmap.ToString();
+
+            /*
+            var ar = BitConverter.ToString(bitmapByteArray).Split('-');
+
+            int len = 500;
+            string[] arr = new string[len];
+            Array.Copy(ar, arr, len);
+
+            return arr;
+            
+/*
+            var bitmapByteArray = GetBitmapByByteArray();
+            return BitConverter.ToString(bitmapByteArray).Split('-');
+*/
         }
 
         /// <summary>
@@ -82,23 +122,6 @@ namespace GraphToBitmap.BitmapCnv
                 // image is not a black pixel
                 return "1";
             }
-        }
-
-        /// <summary>
-        /// Získá obrázek v podobě řetězce hexa znaků
-        /// </summary>
-        /// <returns></returns>
-        public string GetBitmapByString()
-        {
-            StringBuilder bitmap = new StringBuilder();
-
-            var bitmapByteArray = GetBitmapByByteArray();
-
-            bitmap.Append("{0x" + Environment.NewLine);
-            bitmap.Append(BitConverter.ToString(bitmapByteArray).Replace("-", ",0x"));
-            bitmap.Append("};" + Environment.NewLine);
-
-            return bitmap.ToString();
         }
     }
 }
