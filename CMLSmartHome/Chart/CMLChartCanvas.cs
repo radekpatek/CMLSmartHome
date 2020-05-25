@@ -1,204 +1,43 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
-using System.IO;
 
 namespace CMLSmartHomeController.Chart
 {
+
     public class CMLChartCanvas
     {
         public int Width { get; }
         public int Height { get; }
         public string Name { get; set; }
 
-        private Graphics _canvas;
-        private Bitmap _image;
+        public SKPaint AsixXPaint { get; set; }
+        public SKPaint AsixYPaint { get; set; }
+        public SKPaint TitlePaint { get; set; }
+        public SKPaint BarPaint { get; set; }
+        public SKPaint LinePaint { get; set; }
 
-        private const double offsetX = 0.9;
-        private double offsetYBottom = 0.8;
+        private SKCanvas _canvas;
+        private SKBitmap _image;
+
+        private const double offsetX = 0.93;
+        private double offsetYBottom = 0.9;
         private double offsetYTop = 0.1;
 
-        internal CMLChartCanvas(Bitmap image)
+        public CMLChartCanvas(SKBitmap image, SKColor border)
         {
             Width = image.Width;
             Height = image.Height;
+            AsixXPaint = new SKPaint { TextSize = 9, Color = SKColors.Black };
+            AsixYPaint = new SKPaint { TextSize = 9, Color = SKColors.Black };
+            TitlePaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
+            BarPaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
+            LinePaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
 
             _image = image;
-            _canvas = Graphics.FromImage(_image);
-            _canvas.Clear(Color.White);
-        }
+            _canvas = new SKCanvas(_image);
+            _canvas.Clear(border);
 
-        /// <summary>
-        /// Před snímku do negativu
-        /// </summary>
-        internal void ConvertBitmapToNegative()
-        {
-            int width = _image.Width;
-            int height = _image.Height;
-                  
-            //negative
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    //get pixel value
-                    Color p = _image.GetPixel(x, y);
-
-                    //extract ARGB value from p
-                    int a = p.A;
-                    int r = p.R;
-                    int g = p.G;
-                    int b = p.B;
-
-                    //find negative value
-                    r = 255 - r;
-                    g = 255 - g;
-                    b = 255 - b;
-
-                    //set new ARGB value in pixel
-                    _image.SetPixel(x, y, Color.FromArgb(a, r, g, b));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Uložení grafu do obrázku
-        /// </summary>
-        /// <param name="imageName"></param>
-        /// <param name="imageFormat"></param>
-        internal void Save(string imageName, ImageFormat imageFormat, bool imageNegative )
-        {
-            if (imageNegative)
-            {
-                ConvertBitmapToNegative();
-            };
-
-            _image.Save(imageName, imageFormat);            
-        }
-
-        /// <summary>
-        /// Získá obrázek
-        /// </summary>
-        /// <param name="imageNegative"></param>
-        /// <returns></returns>
-        internal Bitmap GetBitmap(bool imageNegative)
-        {
-            if (imageNegative)
-            {
-                ConvertBitmapToNegative();
-            }
-
-            return _image;
-        }
-
-        /// <summary>
-        /// Uložení grafu do paměti
-        /// </summary>
-        /// <param name="imageName"></param>
-        /// <param name="imageFormat"></param>
-        internal MemoryStream Save(MemoryStream stream, ImageFormat imageFormat, bool imageNegative)
-        {
-            if (imageNegative)
-            {
-                ConvertBitmapToNegative();
-            };
-
-            _image.Save(stream, imageFormat);
-
-            return stream;
-        }
-
-        /// <summary>
-        /// Vyhreslení křívek grafu
-        /// </summary>
-        internal void DrawChartValues(List<CMLChartYAsix> yAsixs)
-        {
-            foreach (var yAsix in yAsixs)
-            {
-                switch (yAsix.Type)
-                {
-                    case PresentationType.Bar:
-                        DrawBarChartValues(yAsix);
-                        break;
-                    case PresentationType.Line:
-                        DrawLineChartValues(yAsix);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Vykreslení hodnot čárového grafu
-        /// </summary>
-        /// <param name="yAsix"></param>
-        private void DrawLineChartValues(CMLChartYAsix yAsix)
-        {
-            if (yAsix != null)
-            {
-                var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
-                var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
-                //var asixMaxPointY = Height - (int)Math.Floor(Height * offsetYBottom);
-                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
-
-                var pen = new Pen(yAsix.BorderColor);
-                PointF[] bezierPoints = new PointF[yAsix.Values.Length+1];
-
-                for (int i = 0; i < yAsix.Values.Length; i++)
-                {
-                    var distance = ((double)i / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX);
-                    var valuePart = (yAsix.Values[i] - yAsix.MinValue) * (1 / (yAsix.MaxValue - yAsix.MinValue));
-                    var pointHeight = ((asixMinPointY - asixMaxPointY) * valuePart);
-
-                    var x = (float)(distance + asixStartPointX);
-                    var y = (float)((Height * offsetYBottom) - pointHeight);
-                    bezierPoints[i] = new PointF(x, y);
-                }
-                bezierPoints[yAsix.Values.Length] = bezierPoints[yAsix.Values.Length-1];
-
-                _canvas.DrawCurve(pen, bezierPoints);
-            }
-        }
-    
-        /// <summary>
-        /// Vykreslení hodnot sloupcového grafu
-        /// </summary>
-        /// <param name="yAsix"></param>
-        private void DrawBarChartValues(CMLChartYAsix yAsix)
-        {
-            if (yAsix != null)
-            {
-                var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
-                var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
-                //var asixMaxPointY = Height - (int)Math.Floor(Height * offsetYBottom);
-                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
-
-                for (int i = 0; i < yAsix.Values.Length; i++)
-                {
-                    var distance = ((double)i / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX);
-                    var valuePart = (yAsix.Values[i] - yAsix.MinValue) * (1 / (yAsix.MaxValue - yAsix.MinValue));
-                    var barHeight = (int)((asixMinPointY - asixMaxPointY) * valuePart);
-
-                    var x = (int)(distance + asixStartPointX);
-                    var y = (int)Math.Floor(Height * offsetYBottom) - barHeight;
-                    var width = (int)(((double) 1 / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX));
-
-                    var pen = new Pen(yAsix.BorderColor);
-                    _canvas.DrawRectangle(pen, x, y, width, barHeight);
-
-                    if (yAsix.Fill)
-                    {
-                        SolidBrush blueBrush = new SolidBrush(yAsix.BackgroundColor);
-                        _canvas.FillRectangle(blueBrush, x+1, y+1, width-1, barHeight-1);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -207,21 +46,19 @@ namespace CMLSmartHomeController.Chart
         /// <param name="label"></param>
         internal void DrawTitle(string label)
         {
+            Name = label;
+
             if (!string.IsNullOrEmpty(label))
             {
-                Name = label;
+                SKRect bounds = new SKRect();
+                TitlePaint.MeasureText(label, ref bounds);
 
-                var labelFont = new Font(new FontFamily("Lucida Sans"), 9, FontStyle.Regular);
-                var labelMeasure = _canvas.MeasureString(label, labelFont);
+                var x = Width / 2 - bounds.MidX;
+                var y = -bounds.Top;
 
-                var x = Width/2 - (labelMeasure.Width / 2);
-                var y = 0;
-
-                _canvas.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
-                _canvas.DrawString(label,
-                    labelFont,
-                    Brushes.Black, new PointF(x, y));
+                _canvas.DrawText(label, x, y, TitlePaint);
             }
+
         }
 
         /// <summary>
@@ -247,13 +84,10 @@ namespace CMLSmartHomeController.Chart
                     asixEndPointX = (int)Math.Floor(Width * offsetX);
                 }
 
-                //var asixStartPointY = Height - (int)Math.Floor(Height * offsetY);
                 var asixStartPointY = (int)Math.Floor(Height * offsetYTop); ;
                 var asixEndPointY = (int)Math.Floor(Height * offsetYBottom);
 
-                var pen = new Pen(Brushes.Black);
-
-                _canvas.DrawLines(pen, new Point[] { new Point(asixStartPointX, asixStartPointY), new Point(asixEndPointX, asixEndPointY) });
+                _canvas.DrawLine(new SKPoint(asixStartPointX, asixStartPointY), new SKPoint(asixEndPointX, asixEndPointY), AsixYPaint);
 
                 for (int i = 0; i <= 4; i++)
                 {
@@ -275,70 +109,64 @@ namespace CMLSmartHomeController.Chart
                         asixDescEndPointX = (int)Math.Floor(Width * offsetX) + separatorLength;
                     }
 
-                    //var length = (int)Math.Floor(Height * (2 * offsetY - 1));
                     var length = (int)Math.Floor(Height * (offsetYBottom - offsetYTop));
-                    //var asixDescStartPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
                     var asixDescStartPointY = (int)Math.Floor(Height * offsetYBottom) - (int)(koef * length);
-                    //var asixDescEndPointY = (int)Math.Floor(Height * offsetY) - (int)(koef * length);
                     var asixDescEndPointY = (int)Math.Floor(Height * offsetYBottom) - (int)(koef * length);
 
-                    _canvas.DrawLines(pen, new Point[] { new Point(asixDescStartPointX, asixDescStartPointY), new Point(asixDescEndPointX, asixDescEndPointY) });
+                    _canvas.DrawLine(new SKPoint(asixDescStartPointX, asixDescStartPointY), new SKPoint(asixDescEndPointX, asixDescEndPointY), AsixYPaint);
 
                     // Popisky
-                    var labelFont = new Font(new FontFamily("Verdana"), 10, FontStyle.Regular);
-
                     var lengthDesc = yAsix.MaxValue - yAsix.MinValue;
-                    var label = (yAsix.MinValue + koef * lengthDesc).ToString("#0.0");
-                    
+                    var label = (yAsix.MinValue + koef * lengthDesc).ToString("#0");
+
                     int x;
                     int y;
+                    SKRect bounds = new SKRect();
+                    AsixXPaint.MeasureText(label, ref bounds);
 
                     if (yAsix.Location == Location.Left)
                     {
-                        var labelMeasure = _canvas.MeasureString(label, labelFont);
-                        x = asixDescStartPointX - (int)(labelMeasure.Width) + separatorLength - 1;
-                        y = asixDescStartPointY;
+                        x = asixDescStartPointX - (int)(bounds.Width);
+                        y = asixDescStartPointY - (int)bounds.Top + separatorLength;
                     }
                     else
                     {
-                        x = asixDescEndPointX - separatorLength + 1;
-                        y = asixDescStartPointY;
+                        x = asixDescEndPointX;
+                        y = asixDescStartPointY - (int)bounds.Top + separatorLength;
                     }
 
-                    _canvas.DrawString(label, labelFont, Brushes.Black, new PointF(x, y));
+                    _canvas.DrawText(label, x, y, AsixYPaint);
                 }
-                
+
                 // Popiska osy
                 if (!string.IsNullOrEmpty(yAsix.Label))
                 {
-                    var labelFont = new Font(new FontFamily("Lucida Sans"), 9, FontStyle.Regular);
-                    var labelMeasure = _canvas.MeasureString(yAsix.Label, labelFont);
+                    _canvas.Save();
 
-                    GraphicsState state = _canvas.Save();
-                    _canvas.ResetTransform();
 
                     int x;
                     int y;
+                    SKRect bounds = new SKRect();
+                    TitlePaint.MeasureText(yAsix.Label, ref bounds);
 
                     if (yAsix.Location == Location.Left)
                     {
-                        x = 0;
-                        y = (Height / 2) + (int)labelMeasure.Width / 2;
-                        _canvas.RotateTransform(270);
+                        x = (int)-bounds.Top;
+                        y = (Height / 2) + (int)bounds.Width / 2;
+                        _canvas.RotateDegrees(270, x, y);
                     }
                     else
                     {
-                        x = Width;
-                        y = (Height / 2) - (int)labelMeasure.Width / 2;
-                        _canvas.RotateTransform(90);
-                    }
-                    _canvas.TranslateTransform(x, y, MatrixOrder.Append);
-                    _canvas.DrawString(yAsix.Label, labelFont, Brushes.Black, new PointF(0, 0));
+                        x = Width + (int)bounds.Top; ;
+                        y = (Height / 2) - (int)bounds.Width / 2;
 
-                    _canvas.Restore(state);
+                        _canvas.RotateDegrees(90, x, y);
+                    }
+                    _canvas.DrawText(yAsix.Label, x, y, TitlePaint);
+                    _canvas.Restore();
                 }
-                
             }
+
         }
 
         /// <summary>
@@ -353,12 +181,10 @@ namespace CMLSmartHomeController.Chart
             {
                 var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
                 var asixXEndPointX = (int)Math.Floor(Width * offsetX);
-                var asixStartPointY = (int)Math.Floor(Height * offsetYBottom);                
+                var asixStartPointY = (int)Math.Floor(Height * offsetYBottom);
                 var asixXEndPointY = (int)Math.Floor(Height * offsetYBottom);
 
-                var pen = new Pen(Brushes.Black);
-
-                _canvas.DrawLines(pen, new Point[] { new Point(asixStartPointX, asixStartPointY), new Point(asixXEndPointX, asixXEndPointY) });
+                _canvas.DrawLine(new SKPoint(asixStartPointX, asixStartPointY), new SKPoint(asixXEndPointX, asixXEndPointY), AsixXPaint);
 
                 // Osa - hodiny
                 if (xAsix.ValuesType == CMLValuesType.Hourly)
@@ -378,17 +204,18 @@ namespace CMLSmartHomeController.Chart
                         switch (xAsix.Values[i])
                         {
                             case "0":
-                                _canvas.DrawLines(pen, new Point[] { new Point(startPointX, startPointY), new Point(endPointX, endPointY + 3 * separatorLength) });
+                                _canvas.DrawLine(new SKPoint(startPointX, startPointY), new SKPoint(endPointX, endPointY + 3 * separatorLength), AsixXPaint);
                                 break;
                             case "6":
                             case "12":
                             case "18":
-                                _canvas.DrawLines(pen, new Point[] { new Point(startPointX, startPointY), new Point(endPointX, endPointY + separatorLength) });
+                                _canvas.DrawLine(new SKPoint(startPointX, startPointY), new SKPoint(endPointX, endPointY + separatorLength), AsixXPaint);
                                 break;
                             default:
-                                _canvas.DrawLines(pen, new Point[] { new Point(startPointX, startPointY), new Point(endPointX, endPointY) });
+                                _canvas.DrawLine(new SKPoint(startPointX, startPointY), new SKPoint(endPointX, endPointY), AsixXPaint);
                                 break;
                         }
+
 
                         // Popisky
                         switch (xAsix.Values[i])
@@ -397,11 +224,13 @@ namespace CMLSmartHomeController.Chart
                             case "6":
                             case "12":
                             case "18":
-                                var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 8, FontStyle.Regular);
-                                var x = startPointX;
-                                var y = startPointY + separatorLength - 2;
+                                SKRect bounds = new SKRect();
+                                AsixXPaint.MeasureText(xAsix.Values[i].ToString(), ref bounds);
 
-                                _canvas.DrawString(xAsix.Values[i].ToString(), labelFont, Brushes.Black, new PointF(x, y));
+                                var x = startPointX + 2;
+                                var y = startPointY + separatorLength - bounds.Top;
+
+                                _canvas.DrawText(xAsix.Values[i].ToString(), x, y, AsixXPaint);
 
                                 break;
                         }
@@ -409,12 +238,6 @@ namespace CMLSmartHomeController.Chart
                         if (xAsix.Values[i] == "0")
                         {
                             den++;
-
-                            var labelFont = new Font(new FontFamily("MS Reference Sans Serif"), 10, FontStyle.Regular);
-
-                            var x = startPointX;
-                            var y = startPointY + (int)2.5*separatorLength;
-
                             var label = "N/A";
                             switch (den)
                             {
@@ -425,35 +248,123 @@ namespace CMLSmartHomeController.Chart
                                     label = "pozítří";
                                     break;
                             }
+                            SKRect bounds = new SKRect();
+                            AsixXPaint.MeasureText(label, ref bounds);
 
-                            _canvas.DrawString(label, labelFont, Brushes.Black, new PointF(x, y));                           
+                            var x = startPointX + 2;
+                            var y = startPointY + (int)2 * separatorLength + 1 - bounds.Top;
+
+                            _canvas.DrawText(label, x, y, AsixXPaint);
                         }
                     }
                 }
 
-                // Osa - textový popisek
-                if (xAsix.ValuesType == CMLValuesType.String)
-                {
-                    for (int i = 0; i < xAsix.Values.Length; i++)
-                    {
-                        var distance = ((double)i / xAsix.Values.Length) * (asixXEndPointX - asixStartPointX);
-
-                        var startPointX = (int)(distance + asixStartPointX);
-                        var endPointX = startPointX;
-                        var startPointY = asixStartPointY;
-                        var endPointY = startPointY + separatorLength;
-
-                        _canvas.DrawLines(pen, new Point[] { new Point(startPointX, startPointY), new Point(endPointX, endPointY) });
-
-                        //:TODO: popisek hodnoty
-                    }
-                }
-
             }
-            else
+        }
+
+        /// <summary>
+        /// Vyhreslení křívek grafu
+        /// </summary>
+        internal void DrawChartValues(List<CMLChartYAsix> yAsixs)
+        {
+            foreach (var yAsix in yAsixs)
             {
-                throw new ArgumentNullException();
+                switch (yAsix.Type)
+                {
+                    case PresentationType.Bar:
+                        DrawBarChartValues(yAsix);
+                        break;
+                    case PresentationType.Line:
+                        DrawLineChartValues(yAsix);
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
+
+        /// <summary>
+        /// Vykreslení hodnot sloupcového grafu
+        /// </summary>
+        /// <param name="yAsix"></param>
+        private void DrawBarChartValues(CMLChartYAsix yAsix)
+        {
+            if (yAsix != null)
+            {
+                var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
+                var asixXEndPointX = (int)Math.Floor(Width * offsetX);
+                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
+                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
+
+                for (int i = 0; i < yAsix.Values.Length; i++)
+                {
+                    var distance = ((double)i / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX);
+                    var valuePart = (yAsix.Values[i] - yAsix.MinValue) * (1 / (yAsix.MaxValue - yAsix.MinValue));
+                    var barHeight = (int)((asixMinPointY - asixMaxPointY) * valuePart);
+
+                    var x = (int)(distance + asixStartPointX);
+                    var y = (int)Math.Floor(Height * offsetYBottom) - barHeight;
+                    var width = (int)(((double)1 / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX));
+
+                    if (yAsix.Fill)
+                    {
+                        BarPaint.Style = SKPaintStyle.Fill;
+                    }
+
+                    _canvas.DrawRect(new SKRect(x, y, x + width, y + barHeight), BarPaint);
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Vykreslení hodnot čárového grafu
+        /// </summary>
+        /// <param name="yAsix"></param>
+        private void DrawLineChartValues(CMLChartYAsix yAsix)
+        {
+            if (yAsix != null)
+            {
+                var asixStartPointX = Width - (int)Math.Floor(Width * offsetX);
+                var asixXEndPointX = (int)Math.Floor(Width * offsetX);
+                var asixMaxPointY = (int)Math.Floor(Height * offsetYTop);
+                var asixMinPointY = (int)Math.Floor(Height * offsetYBottom);
+
+                SKPoint[] bezierPoints = new SKPoint[yAsix.Values.Length + 1];
+
+                for (int i = 0; i < yAsix.Values.Length; i++)
+                {
+                    var distance = ((double)i / yAsix.Values.Length) * (asixXEndPointX - asixStartPointX);
+                    var valuePart = (yAsix.Values[i] - yAsix.MinValue) * (1 / (yAsix.MaxValue - yAsix.MinValue));
+                    var pointHeight = ((asixMinPointY - asixMaxPointY) * valuePart);
+
+                    var x = (float)(distance + asixStartPointX);
+                    var y = (float)((Height * offsetYBottom) - pointHeight);
+                    bezierPoints[i] = new SKPoint(x, y);
+                }
+                bezierPoints[yAsix.Values.Length] = bezierPoints[yAsix.Values.Length - 1];
+
+                SKPath path = new SKPath();
+                path.MoveTo(bezierPoints[0]);
+
+                for (int i = 1; i < bezierPoints.Length; i += 3)
+                {
+                    path.CubicTo(bezierPoints[i], bezierPoints[i + 1], bezierPoints[i + 2]);
+                }
+                path.MoveTo(bezierPoints[bezierPoints.Length - 1]);
+
+                LinePaint.Style = SKPaintStyle.Stroke;
+                _canvas.DrawPath(path, LinePaint);
+            }
+        }
+
+        /// <summary>
+        /// Získá obrázek
+        /// </summary>
+        /// <returns></returns>
+        internal SKBitmap GetBitmap()
+        {
+            return _image;
         }
     }
 }

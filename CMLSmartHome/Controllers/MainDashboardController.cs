@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System;
 using CMLSmartHomeController.Chart;
 using System.Drawing;
+using System.Drawing.Text;
+using Microsoft.Extensions.Logging;
+using SkiaSharp;
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -15,10 +18,12 @@ namespace CMLSmartHomeController.Controllers
     public class MainDashboardController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private ILogger<MainDashboardController> _logger;
 
-        public MainDashboardController(ApplicationDbContext context)
+        public MainDashboardController(ApplicationDbContext context, ILogger<MainDashboardController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/MainDashboard
@@ -146,7 +151,14 @@ namespace CMLSmartHomeController.Controllers
                     // Graf venkovní teploty a srážek
                     var cmlChart = new CMLChart();
 
-                    //cmlChart.Label = "Předpověď počasí";
+                    cmlChart.Label = "Předpověď počasí";
+
+                    cmlChart.AsixXPaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.AsixYPaint = new SKPaint { TextSize = 12, Color = SKColors.White };
+                    cmlChart.BarPaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.LinePaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.TitlePaint = new SKPaint { TextSize = 14, Color = SKColors.White };
+                    cmlChart.BorderPaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
 
                     var horly = hourlyForecast.Select(t => t.DateTime.Hour.ToString()).ToArray();
                     cmlChart.XAsix = new CMLChartXAsix(horly, CMLValuesType.Hourly);
@@ -165,7 +177,7 @@ namespace CMLSmartHomeController.Controllers
                     // :TODO: nastavit hodnoty velikosti obrázku grafu 
                     int width = 400;
                     int height = 200;
-                    var chartImageBitmap = cmlChart.GetBitmap(width, height, true);
+                    var chartImageBitmap = cmlChart.GetBitmap(width, height);
 
                     var bitmapConvert = new BitmapConvert(chartImageBitmap);
                     graphs.OutdoorTemperatureGraphByte = bitmapConvert.GetBitmapByByteArray();
@@ -195,6 +207,13 @@ namespace CMLSmartHomeController.Controllers
 
                     //cmlChart.Label = "Předpověď počasí";
 
+                    cmlChart.AsixXPaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.AsixYPaint = new SKPaint { TextSize = 12, Color = SKColors.White };
+                    cmlChart.BarPaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.LinePaint = new SKPaint { TextSize = 10, Color = SKColors.White };
+                    cmlChart.TitlePaint = new SKPaint { TextSize = 14, Color = SKColors.White };
+                    cmlChart.BorderPaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
+
                     var horly = hourlyForecast.Select(t => t.DateTime.Hour.ToString()).ToArray();
                     cmlChart.XAsix = new CMLChartXAsix(horly, CMLValuesType.Hourly);
 
@@ -212,7 +231,7 @@ namespace CMLSmartHomeController.Controllers
                     // :TODO: nastavit hodnoty velikosti obrázku grafu 
                     int width = 400;
                     int height = 200;
-                    var chartImageBitmap = cmlChart.GetBitmap(width, height, true);
+                    var chartImageBitmap = cmlChart.GetBitmap(width, height);
 
                     var bitmapConvert = new BitmapConvert(chartImageBitmap);
                     graphs.OutdoorTemperatureGraphString = bitmapConvert.GetBitmapByString();

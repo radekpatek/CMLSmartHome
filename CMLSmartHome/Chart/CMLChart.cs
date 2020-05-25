@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+﻿using SkiaSharp;
+using System.Collections.Generic;
 
 namespace CMLSmartHomeController.Chart
 {
-    public class CMLChart   
+    public class CMLChart
     {
         public string Label { get; set; }
 
-        public CMLChartXAsix XAsix { get; set; }
-        public List<CMLChartYAsix> YAsixs { get; set; }
+        public SKPaint AsixXPaint { get; set; }
+        public SKPaint AsixYPaint { get; set; }
+        public SKPaint TitlePaint { get; set; }
+        public SKPaint BorderPaint { get; set; }
+        public SKPaint BarPaint { get; set; }
+        public SKPaint LinePaint { get; set; }
 
         /// <summary>
         /// Typ grafu
@@ -21,65 +23,27 @@ namespace CMLSmartHomeController.Chart
             bar
         }
 
-        /// <summary>
-        /// Uložení grafu do souboru
-        /// </summary>
-        public void SaveToImage(string imageName, int imageWidth, int imageHeight, ImageFormat imageFormat, bool imageNegative)
+        public CMLChartXAsix XAsix { get; internal set; }
+        public List<CMLChartYAsix> YAsixs { get; internal set; }
+
+        internal SKBitmap GetBitmap(int imageWidth, int imageHeight)
         {
-            Bitmap image = new Bitmap(imageWidth, imageHeight);
+            SKBitmap image = new SKBitmap(imageWidth, imageHeight);
 
-            var canvas = new CMLChartCanvas(image);
-            
-            canvas.DrawTitle(Label);
+            var canvas = new CMLChartCanvas(image, BorderPaint.Color);
 
-            canvas.DrawXAsix(XAsix);
-
-            canvas.DrawYAsixs(YAsixs);
-
-            canvas.DrawChartValues(YAsixs);
-
-            canvas.Save(imageName, imageFormat, imageNegative);            
-        }
-
-        /// <summary>
-        /// Uložení grafu do memory
-        /// </summary>
-        public void SaveToImage(MemoryStream stream, int imageWidth, int imageHeight, ImageFormat imageFormat, bool imageNegative)
-        {
-            Bitmap image = new Bitmap(imageWidth, imageHeight);
-
-            var canvas = new CMLChartCanvas(image);
+            canvas.AsixXPaint = AsixXPaint;
+            canvas.AsixYPaint = AsixYPaint;
+            canvas.TitlePaint = TitlePaint;
+            canvas.BarPaint = BarPaint;
+            canvas.LinePaint = LinePaint;
 
             canvas.DrawTitle(Label);
-
             canvas.DrawXAsix(XAsix);
-
             canvas.DrawYAsixs(YAsixs);
-
             canvas.DrawChartValues(YAsixs);
 
-            canvas.Save(stream, imageFormat, imageNegative);
+            return canvas.GetBitmap();
         }
-
-        /// <summary>
-        /// Uložení grafu do souboru
-        /// </summary>
-        public Bitmap GetBitmap(int imageWidth, int imageHeight, bool imageNegative)
-        {
-            Bitmap image = new Bitmap(imageWidth, imageHeight);
-
-            var canvas = new CMLChartCanvas(image);
-
-            canvas.DrawTitle(Label);
-
-            canvas.DrawXAsix(XAsix);
-
-            canvas.DrawYAsixs(YAsixs);
-
-            canvas.DrawChartValues(YAsixs);
-
-            return canvas.GetBitmap(imageNegative);
-        }
-
     }
 }

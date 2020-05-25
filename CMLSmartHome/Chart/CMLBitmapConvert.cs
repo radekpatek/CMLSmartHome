@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,32 +10,38 @@ namespace CMLSmartHomeController.Chart
     public class BitmapConvert
     {
         private Bitmap _bitmap;
+        private SKBitmap _SKBitmap;
 
         public BitmapConvert(Bitmap bitmap)
         {
             _bitmap = bitmap;
         }
 
+        public BitmapConvert(SKBitmap chartImageBitmap)
+        {
+            _SKBitmap = chartImageBitmap;
+        }
+
+
         /// <summary>
         /// Získá obrázek v podobě pole bajtů
         /// </summary>
         /// <returns></returns>
-        public byte[] GetBitmapByByteArray()
+        internal byte[] GetBitmapByByteArray()
         {
-
             List<byte> bitmap = new List<byte>();
 
-            if (_bitmap.Width % 8 == 0)
+            if (_SKBitmap.Width % 8 == 0)
             {
                 StringBuilder sbLine = new StringBuilder();
-                for (int ii = 0; ii < _bitmap.Height; ii++)
+                for (int ii = 0; ii < _SKBitmap.Height; ii++)
                 {
                     // loop each row of image
-                    for (int jj = 0; jj < _bitmap.Width; jj++)
+                    for (int jj = 0; jj < _SKBitmap.Width; jj++)
                     {
                         // loop each pixel in row and add to sbLine string to build
                         // string of bits for black and white image
-                        Color pixelColor = _bitmap.GetPixel(jj, ii);
+                        SKColor pixelColor = _SKBitmap.GetPixel(jj, ii);
                         sbLine.Append(HexConverter(pixelColor));
                     }
                     // convert sbline string to byte array
@@ -49,15 +56,26 @@ namespace CMLSmartHomeController.Chart
             }
 
             return bitmap.ToArray();
-            /*
-            List<sbyte> bitmap1 = new List<sbyte>();
-            bitmap1.Add(0);
-            bitmap1.Add(0);
-            bitmap1.Add(0);
-            bitmap1.Add(0);
-            return bitmap1.ToArray();
-            */
 
+        }
+
+        /// <summary>
+        /// Převod barevného bodu na "0"-černý bod, "1"-bod má jinou barvu 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        private string HexConverter(SKColor color)
+        {
+            if ((color.Red.ToString("X2") + color.Green.ToString("X2") + color.Blue.ToString("X2")).Equals("000000"))
+            {
+                // image black pixel
+                return "0";
+            }
+            else
+            {
+                // image is not a black pixel
+                return "1";
+            }
         }
 
         /// <summary>
@@ -75,20 +93,6 @@ namespace CMLSmartHomeController.Chart
             bitmap.Append("]};");
 
             return bitmap.ToString();
-
-            /*
-            var ar = BitConverter.ToString(bitmapByteArray).Split('-');
-
-            int len = 500;
-            string[] arr = new string[len];
-            Array.Copy(ar, arr, len);
-
-            return arr;
-            
-/*
-            var bitmapByteArray = GetBitmapByByteArray();
-            return BitConverter.ToString(bitmapByteArray).Split('-');
-*/
         }
 
         /// <summary>
@@ -103,25 +107,6 @@ namespace CMLSmartHomeController.Chart
                     bitString.Substring(pos * 8, 8),
                     2)
                 ).ToArray();
-        }
-
-        /// <summary>
-        /// Převod barevného bodu na "0"-černý bod, "1"-bod má jinou barvu 
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        private String HexConverter(Color color)
-        {
-            if ((color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2")).Equals("000000"))
-            {
-                // image black pixel
-                return "0";
-            }
-            else
-            {
-                // image is not a black pixel
-                return "1";
-            }
         }
     }
 }
