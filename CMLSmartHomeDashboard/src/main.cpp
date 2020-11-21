@@ -5,14 +5,15 @@
 #include "base64.hpp"
 #include <base64.h>
 
-#include <ArduinoJson.h>
+#include "ArduinoJson.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <Adafruit_I2CDevice.h>
 
-#include <Fonts/Cousine8pt7b.h>
-#include <Fonts/FreeSans9pt7b.h>
-#include <Fonts/FreeSans12pt7b.h>
-#include <Fonts/FreeSans18pt7b.h>
+#include "Fonts\Cousine8pt7b.h"
+#include "Fonts\FreeSans9pt7b.h"
+#include "Fonts\FreeSans12pt7b.h"
+#include "Fonts\FreeSans18pt7b.h"
 
 
 GxEPD2_BW < GxEPD2_750, GxEPD2_750::HEIGHT / 2 > display(GxEPD2_750(D8,  D3, D4, D2));
