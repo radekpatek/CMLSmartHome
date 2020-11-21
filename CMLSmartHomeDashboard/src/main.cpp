@@ -217,8 +217,7 @@ void drawDashboard()
       String sunset = dashboard["sunset"].as<String>();      
       displayValue(160, 210, right, FreeSans12pt7b, sunset); 
 
-      //Teplota rosnéhoho bodu - vnitřní­ (Jí­delna)
-      //String indoorDewpointTemperature = dashboard["indoorDewpointTemperature"].as<String>();      
+      //Teplota rosnéhoho bodu - vnitřní­ (Jí­delna)    
       int indoorDewpointTemperature = round(dashboard["indoorDewpointTemperature"].as<double>());   
       displayValue(160, 272, right, FreeSans12pt7b, String(indoorDewpointTemperature)); 
 
