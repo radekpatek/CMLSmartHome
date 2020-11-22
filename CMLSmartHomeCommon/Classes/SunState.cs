@@ -1,4 +1,4 @@
-﻿namespace CMLSmartHomeController.Controllers
+﻿namespace CMLSmartHomeCommon.Classes
 {
     /// <summary>
     /// Východ a západ slunce

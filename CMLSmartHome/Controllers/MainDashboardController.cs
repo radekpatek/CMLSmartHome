@@ -175,8 +175,8 @@ namespace CMLSmartHomeController.Controllers
 
         // GET: api/MainDashboard/OutdoorSensors
         [HttpGet]
-        [Route("OutdoorSensors")]
-        public CollectorsValues GetOutdoorSensors()
+        [Route("OutdoorCollectors")]
+        public CollectorsValues GetOutdoorCollectors()
         {
             var collectorsValues = new CollectorsValues();
 
@@ -216,8 +216,8 @@ namespace CMLSmartHomeController.Controllers
 
         // GET: api/MainDashboard/IndoorSensors
         [HttpGet]
-        [Route("IndoorSensors")]
-        public CollectorsValues GetIndoorSensors()
+        [Route("IndoorCollectors")]
+        public CollectorsValues GetIndoorCollectors()
         {
             var collectorsValues = new CollectorsValues();
 
