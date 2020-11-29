@@ -20,6 +20,10 @@ namespace CMLSmartHomeController.Chart
         private SKCanvas _canvas;
         private SKBitmap _image;
 
+        private const int AsixYTextSize = 10;
+        private const int AsixYTextSizeBig = 16;
+        private const int TitleTextSize = 10;
+
         private const double offsetX = 0.93;
         private double offsetYBottom = 0.9;
         private double offsetYTop = 0.1;
@@ -29,8 +33,8 @@ namespace CMLSmartHomeController.Chart
             Width = image.Width;
             Height = image.Height;
             AsixXPaint = new SKPaint { TextSize = 9, Color = SKColors.Black };
-            AsixYPaint = new SKPaint { TextSize = 9, Color = SKColors.Black };
-            TitlePaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
+            AsixYPaint = new SKPaint { Color = SKColors.Black };
+            TitlePaint = new SKPaint { TextSize = TitleTextSize, Color = SKColors.Black };
             BarPaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
             LinePaint = new SKPaint { TextSize = 10, Color = SKColors.Black };
 
@@ -58,7 +62,6 @@ namespace CMLSmartHomeController.Chart
 
                 _canvas.DrawText(label, x, y, TitlePaint);
             }
-
         }
 
         /// <summary>
@@ -89,7 +92,24 @@ namespace CMLSmartHomeController.Chart
 
                 _canvas.DrawLine(new SKPoint(asixStartPointX, asixStartPointY), new SKPoint(asixEndPointX, asixEndPointY), AsixYPaint);
 
-                for (int i = 0; i <= 4; i++)
+                if (yAsix.ZoroValueMark && yAsix.MinValue < 0)
+                {
+                    const int separatorLength = 5;
+
+                    var koef = (0 - yAsix.MinValue) / (yAsix.MaxValue - yAsix.MinValue);
+                    var length = (int)Math.Floor(Height * (offsetYBottom - offsetYTop));
+                    var zeroAsixStartPointX = Width - (int)Math.Floor(Width * offsetX) - separatorLength;
+                    var zeroAsixStartPointY = (int)Math.Floor(Height * offsetYBottom) - (int)(koef * length);
+                    var zeroAsixEndPointX = (int)Math.Floor(Width * offsetX);
+                    var zeroAsixEndPointY = zeroAsixStartPointY;
+
+                    DrawDashedLine(new SKPoint(zeroAsixStartPointX, zeroAsixStartPointY), new SKPoint(zeroAsixEndPointX, zeroAsixEndPointY), 5, 5);
+                }
+
+                var minIndex = 0;
+                var maxIndex = 4;
+
+                for (int i = minIndex; i <= maxIndex; i++)
                 {
                     const int separatorLength = 5;
 
@@ -122,7 +142,9 @@ namespace CMLSmartHomeController.Chart
                     int x;
                     int y;
                     SKRect bounds = new SKRect();
-                    AsixXPaint.MeasureText(label, ref bounds);
+
+                    AsixYPaint.TextSize = (i == minIndex || i == maxIndex) ? AsixYTextSizeBig : AsixYTextSize;
+                    AsixYPaint.MeasureText(label, ref bounds);
 
                     if (yAsix.Location == Location.Left)
                     {
@@ -280,6 +302,43 @@ namespace CMLSmartHomeController.Chart
                     default:
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Vykreslení přerušované čáry
+        /// </summary>
+        /// <param name="startPoint">Počáteční bod</param>
+        /// <param name="endPoint">Koncový bod</param>
+        /// <param name="lineLength">Délka plné čáry</param>
+        /// <param name="spaceLength">Délka prázdné čáry</param>
+        private void DrawDashedLine(SKPoint startPoint, SKPoint endPoint, int lineLength, int spaceLength)
+        {
+            var endPointX = startPoint.X;
+            var endPointY = startPoint.Y;
+            float startPointX;
+            float startPointY;
+
+            var length = Math.Sqrt(Math.Pow(Math.Abs(endPoint.X - startPoint.X), 2) + Math.Pow(Math.Abs(endPoint.Y - startPoint.Y), 2));
+            var xKoef = (length == 0) ? 0 : (endPoint.X - startPoint.X) / length;
+            var yKoef = (length == 0) ? 0 : (endPoint.Y - startPoint.Y) / length;
+
+            var count = length / (lineLength + spaceLength);
+
+            for (int i = 0; i < count; i++)
+            {
+                // plná čára
+                startPointX = endPointX;
+                startPointY = endPointY;
+                endPointX = startPointX + (float)(lineLength * xKoef);
+                endPointY = startPointY + (float)(lineLength * yKoef);
+                _canvas.DrawLine(new SKPoint(startPointX, startPointY), new SKPoint(endPointX, endPointY), AsixYPaint);
+
+                // prázdná čára 
+                startPointX = endPointX;
+                startPointY = endPointY;
+                endPointX = startPointX + (float)(spaceLength * xKoef);
+                endPointY = startPointY + (float)(spaceLength * yKoef);
             }
         }
 

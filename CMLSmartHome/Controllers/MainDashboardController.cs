@@ -345,11 +345,11 @@ namespace CMLSmartHomeController.Controllers
                     var precipitationForecastValues = hourlyForecast.Select(t => t.Rain + t.Snow).ToArray();
 
                     cmlChart.YAsixs = new List<CMLChartYAsix>();
-                    cmlChart.YAsixs.Add(new CMLChartYAsix("Teplota (°C)", true, Color.Black, Color.Black, temperatureForecastValues, 1, PresentationType.Line, Location.Left));
-                    cmlChart.YAsixs.Add(new CMLChartYAsix("Srážky (mm)", true, Color.Black, Color.Black, precipitationForecastValues, 2, PresentationType.Bar, Location.Right));
+                    cmlChart.YAsixs.Add(new CMLChartYAsix("Teplota (°C)", true, Color.Black, Color.Black, temperatureForecastValues, 1, PresentationType.Line, Location.Left, true));
+                    cmlChart.YAsixs.Add(new CMLChartYAsix("Srážky (mm)", true, Color.Black, Color.Black, precipitationForecastValues, 2, PresentationType.Bar, Location.Right, false));
 
                     // Nastavení maximalní hodnoty na ose Y pro výše srážek. Ostaní min/max jsou defaultně min/max hodnoty
-                    cmlChart.YAsixs.Where(t => t.Id == 1).FirstOrDefault().MinValue = 0;
+                    cmlChart.YAsixs.Where(t => t.Id == 1).FirstOrDefault().MinValue = Math.Min(0, temperatureForecastValues.Min());
                     cmlChart.YAsixs.Where(t => t.Id == 2).FirstOrDefault().MaxValue = 4;
 
                     // :TODO: nastavit hodnoty velikosti obrázku grafu 
@@ -401,11 +401,11 @@ namespace CMLSmartHomeController.Controllers
                     var precipitationForecastValues = hourlyForecast.Select(t => t.Rain + t.Snow).ToArray();
 
                     cmlChart.YAsixs = new List<CMLChartYAsix>();
-                    cmlChart.YAsixs.Add(new CMLChartYAsix("Teplota (°C)", true, Color.Black, Color.Black, temperatureForecastValues, 1, PresentationType.Line, Location.Left));
-                    cmlChart.YAsixs.Add(new CMLChartYAsix("Srážky (mm)", true, Color.Black, Color.Black, precipitationForecastValues, 2, PresentationType.Bar, Location.Right));
+                    cmlChart.YAsixs.Add(new CMLChartYAsix("Teplota (°C)", true, Color.Black, Color.Black, temperatureForecastValues, 1, PresentationType.Line, Location.Left, true));
+                    cmlChart.YAsixs.Add(new CMLChartYAsix("Srážky (mm)", true, Color.Black, Color.Black, precipitationForecastValues, 2, PresentationType.Bar, Location.Right, false));
 
                     // Nastavení maximalní hodnoty na ose Y pro výše srážek. Ostaní min/max jsou defaultně min/max hodnoty
-                    cmlChart.YAsixs.Where(t => t.Id == 1).FirstOrDefault().MinValue = 0;
+                    cmlChart.YAsixs.Where(t => t.Id == 1).FirstOrDefault().MinValue = Math.Min(0, temperatureForecastValues.Min()); ;
                     cmlChart.YAsixs.Where(t => t.Id == 2).FirstOrDefault().MaxValue = 4;
 
                     // :TODO: nastavit hodnoty velikosti obrázku grafu 

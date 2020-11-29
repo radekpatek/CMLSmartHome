@@ -12,6 +12,8 @@ namespace CMLSmartHomeController.Chart
         public double[] Values { get; set; }
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
+        public bool ZoroValueMark { get; set; }
+
         public int Id { get; set; }
         public PresentationType Type { get; set; }
         public Location Location { get; set; }
@@ -31,7 +33,7 @@ namespace CMLSmartHomeController.Chart
             }
         }
 
-        public CMLChartYAsix(string label, bool fill, Color backgroundColor, Color borderColor, double[] values, int id, PresentationType type, Location location)
+        public CMLChartYAsix(string label, bool fill, Color backgroundColor, Color borderColor, double[] values, int id, PresentationType type, Location location, bool zoroValueMark)
         {
             Label = label;
             Fill = fill;
@@ -40,6 +42,7 @@ namespace CMLSmartHomeController.Chart
             Id = id;
             Type = type;
             Location = location;
+            ZoroValueMark = zoroValueMark;
             Values = values;
             if (values != null)
             {
