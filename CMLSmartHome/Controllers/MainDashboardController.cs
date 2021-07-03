@@ -12,6 +12,9 @@ using SkiaSharp;
 
 namespace CMLSmartHomeController.Controllers
 {
+    /// <summary>
+    /// MainDashboardController
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class MainDashboardController : ControllerBase
@@ -44,7 +47,7 @@ namespace CMLSmartHomeController.Controllers
                     {
                         var sv = new SensorValue();
                         sv.Sensor = sensor;
-                        sv.Value = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).LastOrDefault().Value;
+                        sv.Value = _context.SensorRecords.LastOrDefault(t => t.SensorId == sensor.Id).Value;
 
                         outdoorSensors.Add(sv);
                     }
@@ -60,7 +63,8 @@ namespace CMLSmartHomeController.Controllers
                         {
                             var sv = new SensorValue();
                             sv.Sensor = sensor;
-                            sv.Value = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).LastOrDefault().Value;
+                            var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
+                            sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                             IndoorSensorValues.Add(sv);
                         }
@@ -98,7 +102,7 @@ namespace CMLSmartHomeController.Controllers
                         }
                     }
 
-                    // Teplota rosného bodu - v jídelně
+                    // Teplota rosného bodu
                     var indoorDewPointCollector = _context.Collectors.Where(t => t.Id == 1).Include(t => t.Sensors).FirstOrDefault();
 
                     if (indoorDewPointCollector != null)
@@ -106,8 +110,8 @@ namespace CMLSmartHomeController.Controllers
                         var indoorTemperatureSensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
                         var indoorHumaditySensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
 
-                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).LastOrDefault().Value;
-                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).LastOrDefault().Value;
+                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
+                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
 
                         mainDashboard.IndoorDewpointTemperature = Weather.DewpointTemperatureCalculate(indoorHumadity, indoorTemperature);
                     }
@@ -116,8 +120,8 @@ namespace CMLSmartHomeController.Controllers
                     var outdoorTemperatureSensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
                     var outdoorHumaditySensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
 
-                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).LastOrDefault().Value;
-                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).LastOrDefault().Value;
+                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
+                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
 
                     mainDashboard.OutdoorDewpointTemperature = Weather.DewpointTemperatureCalculate(outdoorHumadity, outdoorTemperature);
 
@@ -236,7 +240,8 @@ namespace CMLSmartHomeController.Controllers
                     {
                         var sv = new SensorValue();
                         sv.Sensor = sensor;
-                        sv.Value = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).LastOrDefault().Value;
+                        var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
+                        sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);                        
 
                         indoorSensorValues.Add(sv);
                     }
@@ -357,7 +362,7 @@ namespace CMLSmartHomeController.Controllers
                     int height = 200;
                     var chartImageBitmap = cmlChart.GetBitmap(width, height);
 
-                    var bitmapConvert = new BitmapConvert(chartImageBitmap);
+                    var bitmapConvert = new CMLBitmapConvert(chartImageBitmap);
                     graphs.OutdoorTemperatureGraphByte = bitmapConvert.GetBitmapByByteArray();
                 }
             }
@@ -413,7 +418,7 @@ namespace CMLSmartHomeController.Controllers
                     int height = 200;
                     var chartImageBitmap = cmlChart.GetBitmap(width, height);
 
-                    var bitmapConvert = new BitmapConvert(chartImageBitmap);
+                    var bitmapConvert = new CMLBitmapConvert(chartImageBitmap);
                     graphs.OutdoorTemperatureGraphString = bitmapConvert.GetBitmapByString();
                 }
             }

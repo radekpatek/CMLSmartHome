@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace CMLSmartHomeController.Chart
 {
+    /// <summary>
+    /// Osa Y
+    /// </summary>
     public class CMLChartYAsix
     {
         public string Label { get; set; }

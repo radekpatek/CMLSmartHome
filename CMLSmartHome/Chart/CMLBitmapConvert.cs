@@ -7,17 +7,17 @@ using System.Text;
 
 namespace CMLSmartHomeController.Chart
 {
-    public class BitmapConvert
+    public class CMLBitmapConvert
     {
         private Bitmap _bitmap;
         private SKBitmap _SKBitmap;
 
-        public BitmapConvert(Bitmap bitmap)
+        public CMLBitmapConvert(Bitmap bitmap)
         {
             _bitmap = bitmap;
         }
 
-        public BitmapConvert(SKBitmap chartImageBitmap)
+        public CMLBitmapConvert(SKBitmap chartImageBitmap)
         {
             _SKBitmap = chartImageBitmap;
         }

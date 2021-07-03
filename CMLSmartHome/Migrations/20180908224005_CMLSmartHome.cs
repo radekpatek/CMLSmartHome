@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CMLSmartHomeController.Migrations
 {
+    /// <summary>
+    /// CMLSmartHome
+    /// </summary>
     public partial class CMLSmartHome : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

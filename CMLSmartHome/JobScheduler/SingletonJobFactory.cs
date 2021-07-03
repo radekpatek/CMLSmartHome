@@ -5,6 +5,9 @@ using System;
 
 namespace CMLSmartHomeController.JobScheduler
 {
+    /// <summary>
+    /// SingletonJobFactory
+    /// </summary>
     public class SingletonJobFactory : IJobFactory
     {
         private readonly IServiceProvider _serviceProvider;

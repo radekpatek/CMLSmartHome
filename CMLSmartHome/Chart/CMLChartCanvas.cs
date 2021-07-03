@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace CMLSmartHomeController.Chart
 {
-
+    /// <summary>
+    /// Canvas grafu
+    /// </summary>
     public class CMLChartCanvas
     {
         public int Width { get; }

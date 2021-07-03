@@ -15,7 +15,6 @@ using Quartz;
 using Quartz.Impl;
 using CMLSmartHomeController.JobScheduler.Jobs;
 
-
 namespace CMLSmartHomeController
 {
     public class Startup
@@ -38,19 +37,26 @@ namespace CMLSmartHomeController
                 .AddNewtonsoftJson();
 
             services.AddControllersWithViews();
+            services.AddControllers();
             services.AddRazorPages();
 
             // Add Quartz services
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            // Add our job
+            // OpenWeatherJob
             services.AddSingleton<OpenWeatherJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(OpenWeatherJob),
                 cronExpression: "0 0 0/1 * * ?")); // run every 1 hour
              // cronExpression: "0/30 * * * * ?")); // run every 5 seconds
              // cronExpression: "0 0/5 * * * ?")); // run every 5 minutess
+
+            // WeatherRecordArchiveJob
+            services.AddSingleton<WeatherRecordArchiveJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(WeatherRecordArchiveJob),
+                cronExpression: "0 0 23 ? * *")); // run every day at 23:00
 
             //QuartzService
             services.AddHostedService<QuartzHostedService>();
@@ -66,7 +72,7 @@ namespace CMLSmartHomeController
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CMLSmartHome API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CMLSmartHome API", Version = "v1" });                
             });
         }
 
@@ -99,7 +105,7 @@ namespace CMLSmartHomeController
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-               // c.RoutePrefix = string.Empty;
+                // c.RoutePrefix = string.Empty;
             });
 
             app.UseRouting();

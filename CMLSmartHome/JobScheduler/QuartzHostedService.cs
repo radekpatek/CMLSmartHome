@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Spi;
 
+/// <summary>
+/// QuartzHostedService
+/// </summary>
 public class QuartzHostedService : IHostedService
 {
     private readonly ISchedulerFactory _schedulerFactory;

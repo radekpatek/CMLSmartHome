@@ -16,6 +16,7 @@ namespace CMLSmartHomeController.Models
         public DbSet<Sensor> Sensors { get; set; }
         public DbSet<SmartHomeController> Controllers { get; set; }
         public DbSet<SensorRecord> SensorRecords { get; set; }
+        public DbSet<SensorRecordArchive> SensorRecordsArchive { get; set; }
         public DbSet<Dashboard> Dashboards { get; set; }
         public DbSet<WeatherForecast> WeatherForecast { get; set; }
         public DbSet<WeatherForecast.CurrentState> WeatherForecastCurrentState { get; set; }
@@ -34,6 +35,10 @@ namespace CMLSmartHomeController.Models
 
             modelBuilder.Entity<SensorRecord>()
                 .ToTable("SensorRecords")
+                .HasIndex(p => new { p.SensorId, p.DateTime }); ;
+
+            modelBuilder.Entity<SensorRecordArchive>()
+                .ToTable("SensorRecordsArchive")
                 .HasIndex(p => new { p.SensorId, p.DateTime }); ;
 
             modelBuilder.Entity<Dashboard>().ToTable("Dashboard");

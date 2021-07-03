@@ -10,6 +10,9 @@ using System;
 
 namespace CMLSmartHomeController.Controllers
 {
+    /// <summary>
+    /// SensorRecordsController
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SensorRecordsController : ControllerBase

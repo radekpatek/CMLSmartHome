@@ -94,6 +94,7 @@ sudo /var/aspnetcore/CMLSmartHomeWebDeploy.sh
 
 sudo nano /var/aspnetcore/CMLSmartHomeWebDeploy.sh
 
+sudo journalctl -fu CMLSmartHomeWeb.service -e
 
 ---- CMLSmartHomeCollector --------------------------------------------------------
 PI:

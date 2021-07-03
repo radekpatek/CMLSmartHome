@@ -9,8 +9,11 @@ using CMLSmartHomeCommon.Model;
 
 namespace CMLSmartHomeController.Controllers
 {
+    /// <summary>
+    /// CollectorsController
+    /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
     public class CollectorsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -44,7 +47,8 @@ namespace CMLSmartHomeController.Controllers
             }
 
             var collector = _context.Collectors.Include(t => t.Sensors)
-                                    .Where(t => t.MACAddress == macAddress).FirstOrDefault();
+                                    .Where(t => t.MACAddress == macAddress)
+                                    .OrderBy(t => t.MACAddress).FirstOrDefault();
 
             if (collector == null)
             {
@@ -65,7 +69,7 @@ namespace CMLSmartHomeController.Controllers
                 return BadRequest(ModelState);
             }
 
-            var collector = await _context.Collectors.Where(t => t.Id == id).Include(t => t.Sensors).FirstOrDefaultAsync();
+            var collector = await _context.Collectors.Where(t => t.Id == id).Include(t => t.Sensors).OrderBy(t => t.Id).FirstOrDefaultAsync();
 
             if (collector == null)
             {

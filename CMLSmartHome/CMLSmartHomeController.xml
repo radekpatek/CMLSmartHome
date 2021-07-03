@@ -1,0 +1,525 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CMLSmartHomeController</name>
+    </assembly>
+    <members>
+        <member name="M:CMLSmartHomeController.Chart.CMLBitmapConvert.GetBitmapByByteArray">
+            <summary>
+            Získá obrázek v podobě pole bajtů
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLBitmapConvert.HexConverter(SkiaSharp.SKColor)">
+            <summary>
+            Převod barevného bodu na "0"-černý bod, "1"-bod má jinou barvu 
+            </summary>
+            <param name="color"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLBitmapConvert.GetBitmapByString">
+            <summary>
+            Získá obrázek v podobě řetězce hexa znaků
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLBitmapConvert.GetBytes(System.String)">
+            <summary>
+            Převod řetězců na pole bajtů. Každých 8 znaků se převede na byte.  
+            </summary>
+            <param name="bitString"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CMLSmartHomeController.Chart.CMLChart">
+            <summary>
+            CMLChart - Graf
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.Label">
+            <summary>
+            Popisek
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.AsixXPaint">
+            <summary>
+            Malování osy X
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.AsixYPaint">
+            <summary>
+            Malování osy Y
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.TitlePaint">
+            <summary>
+            Malování titulku
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.BorderPaint">
+            <summary>
+            Malování pozadí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.BarPaint">
+            <summary>
+            Malování Baru
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.Chart.CMLChart.LinePaint">
+            <summary>
+            Malování čáry
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Chart.CMLChart.ChartType">
+            <summary>
+            Typ grafu
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Chart.CMLChartCanvas">
+            <summary>
+            Canvas grafu
+            </summary>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawTitle(System.String)">
+            <summary>
+            Vykreslení popisu grafu
+            </summary>
+            <param name="label"></param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawYAsixs(System.Collections.Generic.List{CMLSmartHomeController.Chart.CMLChartYAsix})">
+            <summary>
+            Vykreslení osy Y
+            </summary>
+            <param name="yAsixs"></param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawXAsix(CMLSmartHomeController.Chart.CMLChartXAsix)">
+            <summary>
+            Vykreslení osy X
+            </summary>
+            <param name="xAsix"></param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawChartValues(System.Collections.Generic.List{CMLSmartHomeController.Chart.CMLChartYAsix})">
+            <summary>
+            Vyhreslení křívek grafu
+            </summary>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawDashedLine(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Int32,System.Int32)">
+            <summary>
+            Vykreslení přerušované čáry
+            </summary>
+            <param name="startPoint">Počáteční bod</param>
+            <param name="endPoint">Koncový bod</param>
+            <param name="lineLength">Délka plné čáry</param>
+            <param name="spaceLength">Délka prázdné čáry</param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawBarChartValues(CMLSmartHomeController.Chart.CMLChartYAsix)">
+            <summary>
+            Vykreslení hodnot sloupcového grafu
+            </summary>
+            <param name="yAsix"></param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.DrawLineChartValues(CMLSmartHomeController.Chart.CMLChartYAsix)">
+            <summary>
+            Vykreslení hodnot čárového grafu
+            </summary>
+            <param name="yAsix"></param>
+        </member>
+        <member name="M:CMLSmartHomeController.Chart.CMLChartCanvas.GetBitmap">
+            <summary>
+            Získá obrázek
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:CMLSmartHomeController.Chart.CMLChartXAsix">
+            <summary>
+            Osa X
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Chart.CMLChartYAsix">
+            <summary>
+            Osa Y
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Controllers.CollectorsController">
+            <summary>
+            CollectorsController
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Controllers.ControllersController">
+            <summary>
+            ControllersController
+            </summary>
+        </member>
+        <member name="M:CMLSmartHomeController.Controllers.ControllersController.LocalHostName">
+            <summary>
+            Get local Host Name
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Controllers.MainDashboardController">
+            <summary>
+            MainDashboardController
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Controllers.SensorRecordsController">
+            <summary>
+            SensorRecordsController
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.JobSchedule">
+            <summary>
+            JobSchedule
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.Jobs.OpenWeatherJob">
+            <summary>
+            OpenWeatherJob
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo">
+            <summary>
+            Struktura dat stavu a předpovědí počasí služby OpenWeatherMap (One Call API)
+            https://openweathermap.org/api/one-call-api
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Weather.Id">
+            <summary>
+            Identifikace počasí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Weather.Main">
+            <summary>
+            Převládající počasí (Rain, Snow, Extreme etc)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Weather.Description">
+            <summary>
+            Popis počasí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Weather.Icon">
+            <summary>
+            Ikona stavu počasí
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Precipitation">
+            <summary>
+            Precipitation
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Precipitation.Per1h">
+            <summary>
+            Výše srážek (mm)
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp">
+            <summary>
+            Denní teploty
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.DayTemperature">
+            <summary>
+            Denní teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.MinDailyTemperature">
+            <summary>
+            Minimální denní teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.MaxDailyTemperature">
+            <summary>
+            Maximální denní teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.NightTemperature">
+            <summary>
+            Noční teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.EveningTemperature">
+            <summary>
+            Večerní teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyTemp.MorningTemperature">
+            <summary>
+            Ranní teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.DateTime">
+            <summary>
+            Datum a čas měření
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.SunriseTime">
+            <summary>
+            Datum a čas východu Slunce 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.SunsetTime">
+            <summary>
+            Datum a čas západu Slunce 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Temperature">
+            <summary>
+            Teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.FeelsLikeTemperature">
+            <summary>
+            Pocitová teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Pressure">
+            <summary>
+            Tlak
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Humidity">
+            <summary>
+            Vlhkost
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.AtmosphericTemperature">
+            <summary>
+            Teplota rosného bodu 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.UVIndex">
+            <summary>
+            UV Index
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Cloudiness">
+            <summary>
+            Oblačnost (m)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.AverageVisibility">
+            <summary>
+            Průměrná viditelnost (m)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.WindSpeed">
+            <summary>
+            Rychlost větru (m/s)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.WindDirection">
+            <summary>
+            Směr větru (stupně)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.WeatherList">
+            <summary>
+            Počasí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Rain">
+            <summary>
+            Dešťová srážky (mm)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.CurrentState.Snow">
+            <summary>
+            Sněhové srážky (mm)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.DateTime">
+            <summary>
+            Datum a čas měření
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Temperature">
+            <summary>
+            Teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.FeelsLikeTemperature">
+            <summary>
+            Pocitová teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Pressure">
+            <summary>
+            Tlak
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Humidity">
+            <summary>
+            Vlhkost
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.AtmosphericTemperature">
+            <summary>
+            Teplota rosného bodu 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Cloudiness">
+            <summary>
+            Oblačnost (m)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.WindSpeed">
+            <summary>
+            Rychlost větru (m/s)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.WindDirection">
+            <summary>
+            Směr větru (stupně)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.WeatherList">
+            <summary>
+            Počasí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Rain">
+            <summary>
+            Dešťová srážky (mm)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.HourlyState.Snow">
+            <summary>
+            Sněhové srážky (mm)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.DateTime">
+            <summary>
+            Datum a čas měření
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.SunriseTime">
+            <summary>
+            Datum a čas východu Slunce 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.SunsetTime">
+            <summary>
+            Datum a čas západu Slunce 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Temperature">
+            <summary>
+            Teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.FeelsLikeTemperature">
+            <summary>
+            Pocitová teplota
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Pressure">
+            <summary>
+            Tlak
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Humidity">
+            <summary>
+            Vlhkost
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.AtmosphericTemperature">
+            <summary>
+            Teplota rosného bodu 
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.UVIndex">
+            <summary>
+            UV Index
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Cloudiness">
+            <summary>
+            Oblačnost (m)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.AverageVisibility">
+            <summary>
+            Průměrná viditelnost (m)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.WindSpeed">
+            <summary>
+            Rychlost větru (m/s)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.WindDirection">
+            <summary>
+            Směr větru (stupně)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.WeatherList">
+            <summary>
+            Počasí
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Rain">
+            <summary>
+            Dešťové srážky (mm)
+            </summary>
+        </member>
+        <member name="P:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.DailyState.Snow">
+            <summary>
+            Sněhové srážky (mm)
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Latitude">
+            <summary>
+            Souřadnice polohy požadovaného místa - zeměpisná šířka 
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Longitude">
+            <summary>
+            Souřadnice polohy požadovaného místa - zeměpisná délka
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Timezone">
+            <summary>
+            Časová zóna požadovaného místa
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Current">
+            <summary>
+            Aktuální stav počasí
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Hourly">
+            <summary>
+            Předpověď púočasí - po hodinách
+            </summary>
+        </member>
+        <member name="F:CMLSmartHomeController.JobScheduler.Jobs.OpenWeather.WeatherInfo.Root.Daily">
+            <summary>
+            Předpověď púočasí - po dnech
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.Jobs.WeatherRecordArchiveJob">
+            <summary>
+            WeatherRecordArchiveJob
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.JobScheduler.SingletonJobFactory">
+            <summary>
+            SingletonJobFactory
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeController.Migrations.CMLSmartHome">
+            <summary>
+            CMLSmartHome
+            </summary>
+        </member>
+        <member name="T:CMLSmartHomeCommon.Controllers.SensorsController">
+            <summary>
+            SensorsController
+            </summary>
+        </member>
+        <member name="T:QuartzHostedService">
+            <summary>
+            QuartzHostedService
+            </summary>
+        </member>
+    </members>
+</doc>

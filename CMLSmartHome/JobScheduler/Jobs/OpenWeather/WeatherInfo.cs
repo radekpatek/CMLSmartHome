@@ -39,6 +39,9 @@ namespace CMLSmartHomeController.JobScheduler.Jobs.OpenWeather
             public string Icon { get; set; }
         }
 
+        /// <summary>
+        /// Precipitation
+        /// </summary>
         public class Precipitation
         {
             /// <summary>

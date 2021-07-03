@@ -1,7 +1,9 @@
 ﻿namespace CMLSmartHomeController.JobScheduler
 {
     using System;
-
+    /// <summary>
+    /// JobSchedule
+    /// </summary>
     public class JobSchedule
     {
         public JobSchedule(Type jobType, string cronExpression)

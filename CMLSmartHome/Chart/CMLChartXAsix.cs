@@ -2,6 +2,9 @@
 
 namespace CMLSmartHomeController.Chart
 {
+    /// <summary>
+    /// Osa X
+    /// </summary>
     public class CMLChartXAsix
     {
         public string[] Values { get; set; }

@@ -16,6 +16,9 @@ using static CMLSmartHomeCommon.Model.WeatherForecast;
 
 namespace CMLSmartHomeController.JobScheduler.Jobs
 {
+    /// <summary>
+    /// OpenWeatherJob
+    /// </summary>
     [DisallowConcurrentExecution]
     public class OpenWeatherJob : IJob
     {
@@ -65,6 +68,7 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
                         .Include(t => t.Current.WeatherList)
                         .Include(t => t.Hourly)
                         .Include(t => t.Daily)
+                        .OrderBy(t => t.Id)
                         .FirstOrDefault();
 
                     if (weatherForecast != null)

@@ -3,9 +3,9 @@
 namespace CMLSmartHomeController.Model
 {
     /// <summary>
-    /// Záznam měření senzorem
+    /// Archív záznam měření senzorem
     /// </summary>
-    public class SensorRecord
+    public class SensorRecordArchive
     {
         /// <summary>
         /// Jednoznačný identifikátor měření
@@ -37,6 +37,6 @@ namespace CMLSmartHomeController.Model
         /// </summary>
         public System.DateTime DateTime { get; set; }
 
-    }
 
+    }
 }
