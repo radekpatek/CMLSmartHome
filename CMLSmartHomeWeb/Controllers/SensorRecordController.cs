@@ -72,7 +72,7 @@ namespace CMLSmartHomeWeb.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 var client = _collectorAPI.Initialize(_configuration);
-                var response = await client.GetAsync("api/SensorRecords/search?" + searchString);
+                var response = await client.GetAsync("api/VSensorRecords/search?" + searchString);
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonSensorRecordsResult = response.Content.ReadAsStringAsync().Result;

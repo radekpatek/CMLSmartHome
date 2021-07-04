@@ -37,6 +37,7 @@ namespace CMLSmartHomeController.Controllers
             if (_context.Dashboards.Count() > 0)
             {
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
+                                   .OrderBy(t => t.Id)
                                    .First();
 
                 if (dashboard != null)
@@ -47,7 +48,8 @@ namespace CMLSmartHomeController.Controllers
                     {
                         var sv = new SensorValue();
                         sv.Sensor = sensor;
-                        sv.Value = _context.SensorRecords.LastOrDefault(t => t.SensorId == sensor.Id).Value;
+                        var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).Last();
+                        sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                         outdoorSensors.Add(sv);
                     }
@@ -63,7 +65,7 @@ namespace CMLSmartHomeController.Controllers
                         {
                             var sv = new SensorValue();
                             sv.Sensor = sensor;
-                            var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
+                            var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).Last();
                             sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                             IndoorSensorValues.Add(sv);
@@ -77,7 +79,7 @@ namespace CMLSmartHomeController.Controllers
                     // Přepověď teploty a srážek
                     if (_context.WeatherForecast != null)
                     {
-                        var weatherForecastId = _context.WeatherForecast.LastOrDefault().Id;
+                        var weatherForecastId = _context.WeatherForecast.OrderBy(t => t.Id).Last().Id;
 
                         var hourlyForecast = _context.WeatherForecastHourlyState.Where(t => t.WeatherForecastId == weatherForecastId)
                             .OrderBy(m => m.DateTime);
@@ -93,7 +95,7 @@ namespace CMLSmartHomeController.Controllers
                             mainDashboard.PrecipitationForecast.Values = hourlyForecast.Select(t => t.Rain + t.Snow).ToArray();
                         }
 
-                        var currentState = _context.WeatherForecastCurrentState.LastOrDefault();
+                        var currentState = _context.WeatherForecastCurrentState.OrderBy(t => t.Id).Last();
 
                         if (currentState != null)
                         {
@@ -103,25 +105,25 @@ namespace CMLSmartHomeController.Controllers
                     }
 
                     // Teplota rosného bodu
-                    var indoorDewPointCollector = _context.Collectors.Where(t => t.Id == 1).Include(t => t.Sensors).FirstOrDefault();
+                    var indoorDewPointCollector = _context.Collectors.Where(t => t.Id == 1).Include(t => t.Sensors).OrderBy(t => t.Id).FirstOrDefault();
 
                     if (indoorDewPointCollector != null)
                     {
-                        var indoorTemperatureSensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
-                        var indoorHumaditySensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
+                        var indoorTemperatureSensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).OrderBy(t => t.Id).FirstOrDefault();
+                        var indoorHumaditySensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).OrderBy(t => t.Id).FirstOrDefault();
 
-                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
-                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
+                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).OrderBy(t => t.DateTime).Last().Value;
+                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).OrderBy(t => t.DateTime).Last().Value;
 
                         mainDashboard.IndoorDewpointTemperature = Weather.DewpointTemperatureCalculate(indoorHumadity, indoorTemperature);
                     }
 
                     // Teplota rosného bodu - venkovní
-                    var outdoorTemperatureSensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
-                    var outdoorHumaditySensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
+                    var outdoorTemperatureSensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).OrderBy(t => t.Id).FirstOrDefault();
+                    var outdoorHumaditySensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).OrderBy(t => t.Id).FirstOrDefault();
 
-                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
-                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).LastOrDefault().Value;
+                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).Last().Value;
+                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).Last().Value;
 
                     mainDashboard.OutdoorDewpointTemperature = Weather.DewpointTemperatureCalculate(outdoorHumadity, outdoorTemperature);
 
@@ -187,7 +189,8 @@ namespace CMLSmartHomeController.Controllers
             if (_context.Dashboards.Count() > 0)
             {
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
-                                   .First();
+                                    .OrderBy(t => t.Id)
+                                    .First();
 
                 if (dashboard != null)
                 {
@@ -226,7 +229,8 @@ namespace CMLSmartHomeController.Controllers
             var collectorsValues = new CollectorsValues();
 
             var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
-                                   .First();
+                                    .OrderBy(t => t.Id)
+                                    .First();
 
             if (dashboard != null)
             {
@@ -265,6 +269,7 @@ namespace CMLSmartHomeController.Controllers
             if (_context.Dashboards.Count() > 0)
             {
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
+                                   .OrderBy(t => t.Id)  
                                    .First();
 
                 if (dashboard != null)
@@ -277,8 +282,8 @@ namespace CMLSmartHomeController.Controllers
                         var indoorTemperatureSensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
                         var indoorHumaditySensor = indoorDewPointCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
 
-                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).LastOrDefault().Value;
-                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).LastOrDefault().Value;
+                        var indoorTemperature = _context.SensorRecords.Where(t => t.SensorId == indoorTemperatureSensor.Id).OrderBy(t => t.DateTime).Last().Value;
+                        var indoorHumadity = _context.SensorRecords.Where(t => t.SensorId == indoorHumaditySensor.Id).OrderBy(t => t.DateTime).Last().Value;
 
                         dewpointTemperature.IndoorDewpointTemperature = Weather.DewpointTemperatureCalculate(indoorHumadity, indoorTemperature);
                     }
@@ -287,8 +292,8 @@ namespace CMLSmartHomeController.Controllers
                     var outdoorTemperatureSensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).FirstOrDefault();
                     var outdoorHumaditySensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).FirstOrDefault();
 
-                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).LastOrDefault().Value;
-                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).LastOrDefault().Value;
+                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).Last().Value;
+                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).Last().Value;
 
                     dewpointTemperature.OutdoorDewpointTemperature = Weather.DewpointTemperatureCalculate(outdoorHumadity, outdoorTemperature);
                 }

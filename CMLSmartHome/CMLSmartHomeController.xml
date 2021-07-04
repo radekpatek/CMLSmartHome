@@ -165,6 +165,11 @@
             SensorRecordsController
             </summary>
         </member>
+        <member name="T:CMLSmartHomeController.Controllers.VSensorRecordsController">
+            <summary>
+            VSensorRecordsController
+            </summary>
+        </member>
         <member name="T:CMLSmartHomeController.JobScheduler.JobSchedule">
             <summary>
             JobSchedule
