@@ -48,7 +48,7 @@ namespace CMLSmartHomeController.Controllers
                     {
                         var sv = new SensorValue();
                         sv.Sensor = sensor;
-                        var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).Last();
+                        var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
                         sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                         outdoorSensors.Add(sv);
@@ -122,8 +122,11 @@ namespace CMLSmartHomeController.Controllers
                     var outdoorTemperatureSensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Temperature).OrderBy(t => t.Id).FirstOrDefault();
                     var outdoorHumaditySensor = dashboard.OutdoorCollector.Sensors.Where(t => t.Type == CMLSmartHomeCommon.Enums.SensorType.Humidity).OrderBy(t => t.Id).FirstOrDefault();
 
-                    var outdoorTemperature = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).Last().Value;
-                    var outdoorHumadity = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).Last().Value;
+                    var outdoorTemperatureSensorRecord = _context.SensorRecords.Where(t => t.SensorId == outdoorTemperatureSensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
+                    var outdoorTemperature = (outdoorTemperatureSensorRecord == null ? Double.NaN : outdoorTemperatureSensorRecord.Value);
+
+                    var outdoorHumaditySensorRecord = _context.SensorRecords.Where(t => t.SensorId == outdoorHumaditySensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
+                    var outdoorHumadity = (outdoorHumaditySensorRecord == null ? Double.NaN : outdoorHumaditySensorRecord.Value);
 
                     mainDashboard.OutdoorDewpointTemperature = Weather.DewpointTemperatureCalculate(outdoorHumadity, outdoorTemperature);
 
