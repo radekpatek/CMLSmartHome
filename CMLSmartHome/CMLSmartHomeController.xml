@@ -511,11 +511,6 @@
             SingletonJobFactory
             </summary>
         </member>
-        <member name="T:CMLSmartHomeController.Migrations.CMLSmartHome">
-            <summary>
-            CMLSmartHome
-            </summary>
-        </member>
         <member name="T:CMLSmartHomeCommon.Controllers.SensorsController">
             <summary>
             SensorsController
