@@ -2,7 +2,6 @@
 using CMLSmartHomeController.JobScheduler.Jobs.OpenWeather;
 using CMLSmartHomeController.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,7 +9,7 @@ using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static CMLSmartHomeCommon.Model.WeatherForecast;
 
@@ -23,7 +22,7 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
     public class OpenWeatherJob : IJob
     {
         // Inject the DI provider
-       // private readonly ApplicationDbContext _context;
+        // private readonly ApplicationDbContext _context;
         private readonly IServiceProvider _provider;
         private readonly ILogger<OpenWeatherJob> _logger;
 
@@ -33,20 +32,19 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
             _provider = provider;
         }
 
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-
             // Create a new scope
             var scope = _provider.CreateScope();
 
             // Resolve the Scoped service
             var _context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-          
+
             _logger.LogInformation("OpenWeatherJob - Started");
 
             try
             {
-                WebClient webClient = new WebClient();
+                using HttpClient httpClient = new();
 
                 const string appid = "49778d403a36e87cf3f7f5b430570a06";
                 const string units = "metric";
@@ -55,12 +53,12 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
 
                 string url = string.Format("http://api.openweathermap.org/data/2.5/onecall?lat={0}&lon={1}&units={2}&APPID={3}", lat, lon, units, appid);
 
-                var json = webClient.DownloadString(url);
+                var json = await httpClient.GetStringAsync(url);
 
                 var weatherInfo = JsonConvert.DeserializeObject<WeatherInfo.Root>(json);
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
                                    .First();
-                
+
                 if (weatherInfo != null)
                 {
                     var weatherForecast = _context.WeatherForecast
@@ -182,7 +180,7 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
                         daily.AverageVisibility = dailyState.AverageVisibility;
                         daily.Cloudiness = dailyState.Cloudiness;
                         daily.DateTime = DateTimeOffset.FromUnixTimeSeconds(dailyState.DateTime).LocalDateTime;
-                        
+
                         if (dailyState.FeelsLikeTemperature != null)
                         {
                             daily.FeelsLikeTemperature = new WeatherForecast.DailyTemp();
@@ -193,7 +191,7 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
                             daily.FeelsLikeTemperature.MorningTemperature = dailyState.FeelsLikeTemperature.MorningTemperature;
                             daily.FeelsLikeTemperature.NightTemperature = dailyState.FeelsLikeTemperature.NightTemperature;
                         }
-                        
+
                         daily.Humidity = dailyState.Humidity;
                         daily.Pressure = dailyState.Pressure;
                         daily.Rain = dailyState.Rain;
@@ -246,8 +244,6 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
             }
 
             _logger.LogInformation("OpenWeatherJob - Finished");
-
-            return Task.CompletedTask;
         }
     }
 }

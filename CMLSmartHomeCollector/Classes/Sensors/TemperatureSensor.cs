@@ -25,7 +25,7 @@ namespace CMLSmartHomeCollector.Sensors
             Type = SensorType.Temperature;
             Unit = UnitType.CelsiusDegree;
             _logger = logger;
-            _sensor = new DHTSensor(Pi.Gpio.Pin07, DHTSensorTypes.DHT11);
+            _sensor = new DHTSensor(Pi.Gpio[17], DHTSensorTypes.DHT11);
             Thread.Sleep(2000); //Inicializace sensoru před měřením
         }
 

@@ -24,7 +24,7 @@ namespace CMLSmartHomeCollector.Sensors
             Type = SensorType.Humidity;
             Unit = UnitType.Percent;
             _logger = logger;
-            _sensor = new DHTSensor(Pi.Gpio.Pin07, DHTSensorTypes.DHT11);
+            _sensor = new DHTSensor(Pi.Gpio[17], DHTSensorTypes.DHT11);
         }
 
         public override double Measure()

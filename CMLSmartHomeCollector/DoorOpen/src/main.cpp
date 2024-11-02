@@ -204,8 +204,8 @@ void loop() {
   Serial.println(" cm");
 
   // door is closed when distance is less than 3500 cm (-1-Open, 1-Close)
-  DoorOpenState = (distance > 3500) ? -1 : 1;
-
+  DoorOpenState = (distance > 350) ? -1 : 1;
+  
   sendRecord(openDoorSensorId, DoorOpenState, 4);
 
   delay(20000);

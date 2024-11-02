@@ -1,14 +1,15 @@
-﻿using System.Linq;
+﻿using CMLSmartHomeCommon.Classes;
+using CMLSmartHomeController.Chart;
 using CMLSmartHomeController.Models;
-using CMLSmartHomeCommon.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System;
-using CMLSmartHomeController.Chart;
-using System.Drawing;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+
 
 namespace CMLSmartHomeController.Controllers
 {
@@ -34,7 +35,7 @@ namespace CMLSmartHomeController.Controllers
         {
             var mainDashboard = new MainDashboard();
 
-            if (_context.Dashboards.Count() > 0)
+            if (_context.Dashboards.Any())
             {
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
                                    .OrderBy(t => t.Id)
@@ -57,7 +58,8 @@ namespace CMLSmartHomeController.Controllers
 
                     // Vnitřní senzory
                     var IndoorCollectors = new List<CollectorValues>();
-                    foreach (var collector in _context.Collectors.Where(t => t.Id != dashboard.OutdoorCollector.Id).Include(t => t.Sensors))
+                    var collectorList = _context.Collectors.Where(t => t.Id != dashboard.OutdoorCollector.Id).Include(t => t.Sensors).ToList();
+                    foreach (var collector in collectorList)
                     {
                         var collectorValues = new CollectorValues();
                         var IndoorSensorValues = new List<SensorValue>();
@@ -197,7 +199,7 @@ namespace CMLSmartHomeController.Controllers
 
                 if (dashboard != null)
                 {
-                    var outdoorCollectors = new List<CollectorValues>();                                     
+                    var outdoorCollectors = new List<CollectorValues>();
 
                     var outdoorCollector = dashboard.OutdoorCollector;
                     if (outdoorCollector != null)
@@ -248,7 +250,7 @@ namespace CMLSmartHomeController.Controllers
                         var sv = new SensorValue();
                         sv.Sensor = sensor;
                         var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
-                        sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);                        
+                        sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                         indoorSensorValues.Add(sv);
                     }
@@ -272,7 +274,7 @@ namespace CMLSmartHomeController.Controllers
             if (_context.Dashboards.Count() > 0)
             {
                 var dashboard = _context.Dashboards.Include(t => t.OutdoorCollector.Sensors)
-                                   .OrderBy(t => t.Id)  
+                                   .OrderBy(t => t.Id)
                                    .First();
 
                 if (dashboard != null)
@@ -385,7 +387,7 @@ namespace CMLSmartHomeController.Controllers
         {
             var graphs = new DashboardGraphString();
 
-            if (_context.Dashboards.Count() > 0)
+            if (_context.Dashboards.Any())
             {
                 // Přepověď teploty a srážek
                 if (_context.WeatherForecast != null)

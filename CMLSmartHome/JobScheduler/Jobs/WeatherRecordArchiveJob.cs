@@ -57,7 +57,7 @@ namespace CMLSmartHomeController.JobScheduler.Jobs
                 var records = _context.SensorRecords.Where(t => t.DateTime < DateTime.Now.AddDays(-1 * archiveDays));
 
                 if (records != null)
-                { 
+                {
                     var recordList = records.ToList();
 
                     var config = new MapperConfiguration(cfg => cfg.CreateMap<SensorRecord, SensorRecordArchive>());

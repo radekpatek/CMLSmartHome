@@ -1,7 +1,7 @@
 ﻿using CMLSmartHomeCollector.Sensors.DHT;
 using System;
 using System.Threading;
-using Unosquare.RaspberryIO.Gpio;
+using Unosquare.RaspberryIO.Abstractions;
 
 namespace CMLSmartHomeCollector.DHT
 {
@@ -9,7 +9,7 @@ namespace CMLSmartHomeCollector.DHT
     {
         private UInt32[] _data;
 
-        private GpioPin _dataPin;
+        private IGpioPin _dataPin;
 
         private bool _firstReading;
 
@@ -17,7 +17,7 @@ namespace CMLSmartHomeCollector.DHT
 
         private DHTSensorTypes _sensorType;
 
-        public DHTSensor(GpioPin datatPin, DHTSensorTypes sensor)
+        public DHTSensor(IGpioPin datatPin, DHTSensorTypes sensor)
         {
             if (datatPin != null)
             {
