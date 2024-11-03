@@ -11,7 +11,7 @@ using System;
 namespace CMLSmartHomeController.Controllers
 {
     /// <summary>
-    /// SensorRecordsController
+    /// SensorRecordsController  
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
