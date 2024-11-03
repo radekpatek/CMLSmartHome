@@ -21,13 +21,25 @@ namespace CMLSmartHomeController.Chart
         public PresentationType Type { get; set; }
         public Location Location { get; set; }
 
-        public CMLChartYAsix(double[] values)
+        private void InitialDefaults()
         {
             Fill = true;
             BackgroundColor = Color.Black;
             BorderColor = Color.Black;
             Type = PresentationType.Line;
             Location = Location.Left;
+        }
+
+
+        public CMLChartYAsix()
+        {
+            InitialDefaults();
+        }
+
+
+        public CMLChartYAsix(double[] values)
+        {
+            InitialDefaults();
             Values = values;
             if (values != null)
             {
