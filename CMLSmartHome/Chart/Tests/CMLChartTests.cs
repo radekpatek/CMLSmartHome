@@ -10,6 +10,11 @@ namespace CMLSmartHomeController.Chart.Test
         private CMLChart _chart;
         private SKPaint _defaultPaint;
 
+        [TearDown]
+        public void TearDown()
+        {
+            _defaultPaint.Dispose();
+        }
         [SetUp]
         public void Setup()
         {

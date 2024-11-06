@@ -7,8 +7,14 @@ namespace CMLSmartHomeController.Chart.Test
     [TestFixture]
     public class CMLChartCanvasTests
     {
-        private CMLChartCanvas _canvas;
+        private CMLChartCanvas _canvas;        
         private SKBitmap _bitmap;
+
+        [TearDown]
+        public void TearDown()
+        {
+            _bitmap.Dispose();
+        }
         private SKColor _borderColor;
 
         [SetUp]

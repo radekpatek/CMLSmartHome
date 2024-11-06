@@ -162,7 +162,7 @@
         </member>
         <member name="T:CMLSmartHomeController.Controllers.SensorRecordsController">
             <summary>
-            SensorRecordsController
+            SensorRecordsController  
             </summary>
         </member>
         <member name="T:CMLSmartHomeController.Controllers.VSensorRecordsController">
