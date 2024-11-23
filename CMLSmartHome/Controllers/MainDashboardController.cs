@@ -67,7 +67,7 @@ namespace CMLSmartHomeController.Controllers
                         {
                             var sv = new SensorValue();
                             sv.Sensor = sensor;
-                            var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).Last();
+                            var sensorRecord = _context.SensorRecords.Where(t => t.SensorId == sensor.Id).OrderBy(t => t.DateTime).LastOrDefault();
                             sv.Value = (sensorRecord == null ? Double.NaN : sensorRecord.Value);
 
                             IndoorSensorValues.Add(sv);
